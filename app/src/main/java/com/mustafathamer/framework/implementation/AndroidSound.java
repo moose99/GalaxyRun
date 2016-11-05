@@ -2,7 +2,8 @@ package com.mustafathamer.framework.implementation;
 
 import android.media.SoundPool;
 
-import Sound;
+import com.mustafathamer.framework.Sound;
+
 
 /**
  * Created by Mus on 10/30/2016.

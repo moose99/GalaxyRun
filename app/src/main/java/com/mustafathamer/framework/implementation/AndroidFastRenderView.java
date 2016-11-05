@@ -1,5 +1,6 @@
 package com.mustafathamer.framework.implementation;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -21,6 +22,11 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable
     Thread renderThread = null;
     SurfaceHolder holder;
     volatile boolean running = false;
+
+    public AndroidFastRenderView(Context c)
+    {
+        super(c);
+    }
 
     public AndroidFastRenderView(AndroidGame game, Bitmap framebuffer)
     {

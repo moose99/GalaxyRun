@@ -27,7 +27,7 @@ import com.mustafathamer.framework.Screen;
  * Implements the main GAME interface
  */
 
-public class AndroidGame extends Activity implements Game
+public abstract class AndroidGame extends Activity implements Game
 {
     AndroidFastRenderView renderView;
     Graphics graphics;
@@ -61,14 +61,11 @@ public class AndroidGame extends Activity implements Game
                 frameBufferHeight, Config.RGB_565);
 
         // get display width and height
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        mContext.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int screenWidth = displaymetrics.widthPixels;
-        int screenHeight = displaymetrics.heightPixels;
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        // calc scale fro aspect ratio
-        float scaleX = (float) frameBufferWidth / screenWidth;
-        float scaleY = (float) frameBufferHeight / screenHeight;
+        float scaleX = (float) frameBufferWidth / metrics.widthPixels;
+        float scaleY = (float) frameBufferHeight / metrics.heightPixels;
 
         // Create new instances of the classes which will implement our interfaces
         renderView = new AndroidFastRenderView(this, frameBuffer);

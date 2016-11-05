@@ -15,7 +15,7 @@ import android.preference.PreferenceManager;
 
 import com.mustafathamer.framework.FileIO;
 
-/**
+/*
  * Created by Mus on 10/29/2016.
  */
 

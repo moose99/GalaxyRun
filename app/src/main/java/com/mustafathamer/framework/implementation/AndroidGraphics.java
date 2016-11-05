@@ -45,7 +45,7 @@ public class AndroidGraphics implements Graphics
     @Override
     public Image newImage(String fileName, ImageFormat format)
     {
-        Config config = null;
+        Config config;
         if (format == ImageFormat.RGB565)
             config = Config.RGB_565;
         else if (format == ImageFormat.ARGB4444)
@@ -128,7 +128,7 @@ public class AndroidGraphics implements Graphics
     }
 
 
-    public void drawImage(Image Image, int x, int y, int srcX, int srcY,
+    public void drawImage(Image image, int x, int y, int srcX, int srcY,
                           int srcWidth, int srcHeight)
     {
         srcRect.left = srcX;
@@ -141,16 +141,16 @@ public class AndroidGraphics implements Graphics
         dstRect.right = x + srcWidth;
         dstRect.bottom = y + srcHeight;
 
-        canvas.drawBitmap(((AndroidImage) Image).bitmap, srcRect, dstRect, null);
+        canvas.drawBitmap(((AndroidImage) image).bitmap, srcRect, dstRect, null);
     }
 
     @Override
-    public void drawImage(Image Image, int x, int y)
+    public void drawImage(Image image, int x, int y)
     {
-        canvas.drawBitmap(((AndroidImage) Image).bitmap, x, y, null);
+        canvas.drawBitmap(((AndroidImage) image).bitmap, x, y, null);
     }
 
-    public void drawScaledImage(Image Image, int x, int y, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight)
+    public void drawScaledImage(Image image, int x, int y, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight)
     {
         srcRect.left = srcX;
         srcRect.top = srcY;
@@ -162,7 +162,7 @@ public class AndroidGraphics implements Graphics
         dstRect.right = x + width;
         dstRect.bottom = y + height;
 
-        canvas.drawBitmap(((AndroidImage) Image).bitmap, srcRect, dstRect, null);
+        canvas.drawBitmap(((AndroidImage) image).bitmap, srcRect, dstRect, null);
     }
 
     @Override
