@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Created by Mus on 11/23/2016.
- *
+ * <p>
  * Notice that here we also have the three methods: update, paint, and backButton.
  * In addition, we have added an inBounds method that is used to create rectangles
  * with coordinates (x, y, x2, y2).  We use this to create regions in the screen
@@ -17,7 +17,7 @@ import java.util.List;
  * In our case, when the user touches and releases inside the square with side
  * length 250 with a corner at (0, 0), we would call the:
  * game.setScreen(new GameScreen(game));
- *
+ * <p>
  * This is the screen on which we will run our game.
  */
 
@@ -28,6 +28,11 @@ public class MainMenuScreen extends Screen
         super(game);
     }
 
+    //
+    // We have also defined an inbounds method that allows
+    // us to check if the user touches inside a rectangle. If the user touches the Play button, we
+    // open the GameScreen. If the user touches the back button, the game exits.
+    //
     @Override
     public void update(float deltaTime)
     {
@@ -40,30 +45,27 @@ public class MainMenuScreen extends Screen
             TouchEvent event = touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_UP)
             {
-                if (inBounds(event, 0, 0, 250, 250))
+                if (inBounds(event, 50, 350, 250, 450))
                 {
-                    //START GAME
                     game.setScreen(new GameScreen(game));
                 }
+
             }
         }
     }
 
-    //
-    // Determine if the touch even is in the given bounds
-    //
     private boolean inBounds(TouchEvent event, int x, int y, int width,
                              int height)
     {
-        if (event.x > x && event.x < x + width - 1 &&
-                event.y > y && event.y < y + height - 1)
+        if (event.x > x && event.x < x + width - 1 && event.y > y
+                && event.y < y + height - 1)
             return true;
         else
             return false;
     }
 
     //
-    // Draws the menu image
+    // In this method, we paint the menu Image.
     //
     @Override
     public void paint(float deltaTime)
@@ -92,7 +94,7 @@ public class MainMenuScreen extends Screen
     @Override
     public void backButton()
     {
-        //Display "Exit Game?" Box
+        android.os.Process.killProcess(android.os.Process.myPid());
 
     }
 }
