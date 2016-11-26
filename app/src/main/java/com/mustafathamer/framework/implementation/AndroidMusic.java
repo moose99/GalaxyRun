@@ -56,13 +56,22 @@ public class AndroidMusic implements Music, OnCompletionListener, OnSeekComplete
     }
 
     @Override
-    public boolean isLooping()  { return mediaPlayer.isLooping(); }
+    public boolean isLooping()
+    {
+        return mediaPlayer.isLooping();
+    }
 
     @Override
-    public boolean isPlaying()  { return this.mediaPlayer.isPlaying(); }
+    public boolean isPlaying()
+    {
+        return this.mediaPlayer.isPlaying();
+    }
 
     @Override
-    public boolean isStopped()  { return !isPrepared; }
+    public boolean isStopped()
+    {
+        return !isPrepared;
+    }
 
     @Override
     public void pause()
@@ -96,10 +105,16 @@ public class AndroidMusic implements Music, OnCompletionListener, OnSeekComplete
     }
 
     @Override
-    public void setLooping(boolean isLooping)   { mediaPlayer.setLooping(isLooping); }
+    public void setLooping(boolean isLooping)
+    {
+        mediaPlayer.setLooping(isLooping);
+    }
 
     @Override
-    public void setVolume(float volume)         { mediaPlayer.setVolume(volume, volume); }
+    public void setVolume(float volume)
+    {
+        mediaPlayer.setVolume(volume, volume);
+    }
 
     @Override
     public void stop()
@@ -125,7 +140,10 @@ public class AndroidMusic implements Music, OnCompletionListener, OnSeekComplete
     }
 
     @Override
-    public void seekBegin()         { mediaPlayer.seekTo(0); }
+    public void seekBegin()
+    {
+        mediaPlayer.seekTo(0);
+    }
 
 
     @Override
@@ -152,3 +170,4 @@ public class AndroidMusic implements Music, OnCompletionListener, OnSeekComplete
         // TODO Auto-generated method stub
 
     }
+}

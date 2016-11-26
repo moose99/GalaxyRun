@@ -12,9 +12,12 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Image;
+
+import static android.R.attr.format;
 
 /**
  * Created by Mus on 10/29/2016.
@@ -40,6 +43,17 @@ public class AndroidGraphics implements Graphics
         this.frameBuffer = frameBuffer;
         this.canvas = new Canvas(frameBuffer);
         this.paint = new Paint();
+
+        try
+        {
+            for (String s : assets.list(""))
+                Log.i("MOOSE", "Assets List:" + s);
+        }
+        catch (IOException e)
+        {
+            Log.e("MOOSE", e.getMessage());
+        }
+
     }
 
     @Override
@@ -68,7 +82,7 @@ public class AndroidGraphics implements Graphics
         } catch (IOException e)
         {
             throw new RuntimeException("Couldn't load bitmap from asset '"
-                    + fileName + "'");
+                    + fileName + "'.  Exception:" + e);
         } finally
         {
             if (in != null)
