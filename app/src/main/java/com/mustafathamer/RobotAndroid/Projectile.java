@@ -9,7 +9,7 @@ import android.graphics.Rect;
 public class Projectile
 {
 
-    private int x, y, speedX;
+    private int x, y, speedY;
     private boolean visible;
 
     private Rect r;
@@ -18,7 +18,7 @@ public class Projectile
     {
         x = startX;
         y = startY;
-        speedX = 7;
+        speedY = 7;
         visible = true;
 
         r = new Rect(0, 0, 0, 0);
@@ -26,14 +26,15 @@ public class Projectile
 
     public void update()
     {
-        x += speedX;
+        y -= speedY;
         r.set(x, y, x + 10, y + 5);
-        if (x > 800)
+        if (y < 0)
         {
             visible = false;
             r = null;
         }
-        if (x < 800)
+
+        if (y > 0)
         {
             checkCollision();
         }
@@ -80,16 +81,11 @@ public class Projectile
     {
         return x;
     }
-
     public int getY()
     {
         return y;
     }
-
-    public int getSpeedX()
-    {
-        return speedX;
-    }
+    public int getSpeedY() { return speedY; }
 
     public boolean isVisible()
     {
@@ -100,17 +96,14 @@ public class Projectile
     {
         this.x = x;
     }
-
     public void setY(int y)
     {
         this.y = y;
     }
-
-    public void setSpeedX(int speedX)
+    public void setSpeedY(int speedY)
     {
-        this.speedX = speedX;
+        this.speedY = speedY;
     }
-
     public void setVisible(boolean visible)
     {
         this.visible = visible;

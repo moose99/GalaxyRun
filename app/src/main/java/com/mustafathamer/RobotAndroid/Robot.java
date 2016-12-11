@@ -2,6 +2,8 @@ package com.mustafathamer.RobotAndroid;
 
 import android.graphics.Rect;
 
+import com.mustafathamer.framework.Game;
+
 import java.util.ArrayList;
 
 /**
@@ -12,15 +14,13 @@ public class Robot
 {
 
     // Constants are Here
-    final int JUMPSPEED = -15;
     final int MOVESPEED = 5;
 
-    private int centerX = 100;
-    private int centerY = 377;
-    private boolean jumped = false;
+    private Game game;
+    private int centerX;
+    private int centerY;
     private boolean movingLeft = false;
     private boolean movingRight = false;
-    private boolean ducked = false;
     private boolean readyToFire = true;
 
     private int speedX = 0;
@@ -34,53 +34,31 @@ public class Robot
     public static Rect footleft = new Rect(0, 0, 0, 0);
     public static Rect footright = new Rect(0, 0, 0, 0);
 
-
     private Background bg1 = GameScreen.getBg1();
     private Background bg2 = GameScreen.getBg2();
 
     private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 
+    //
+    // position at center near the bottom
+    public Robot(Game game)
+    {
+        this.game = game;
+        centerX = game.getGraphics().getWidth() / 2;
+        centerY = (int) (game.getGraphics().getHeight() * 0.8);
+    }
+
     public void update()
     {
-        // Moves Character or Scrolls Background accordingly.
+        // Moves Character
 
-        if (speedX < 0)
-        {
-            centerX += speedX;
-        }
-        if (speedX == 0 || speedX < 0)
-        {
-            bg1.setSpeedX(0);
-            bg2.setSpeedX(0);
+        centerX += speedX;
 
-        }
-        if (centerX <= 200 && speedX > 0)
-        {
-            centerX += speedX;
-        }
-        if (speedX > 0 && centerX > 200)
-        {
-            bg1.setSpeedX(-MOVESPEED / 5);
-            bg2.setSpeedX(-MOVESPEED / 5);
-        }
-
-        // Updates Y Position
-        centerY += speedY;
-
-        // Handles Jumping
-
-        speedY += 1;
-
-        if (speedY > 3)
-        {
-            jumped = true;
-        }
-
-        // Prevents going beyond X coordinate of 0
-        if (centerX + speedX <= 60)
-        {
-            centerX = 61;
-        }
+        // CLAMP
+        if (centerX > game.getGraphics().getWidth())
+            centerX = game.getGraphics().getWidth();
+        if (centerX < 0)
+            centerX = 0;
 
         rect.set(centerX - 34, centerY - 63, centerX + 34, centerY);
         rect2.set(rect.left, rect.top + 63, rect.left + 68, rect.top + 128);
@@ -89,24 +67,16 @@ public class Robot
         yellowRed.set(centerX - 110, centerY - 110, centerX + 70, centerY + 70);
         footleft.set(centerX - 50, centerY + 20, centerX, centerY + 35);
         footright.set(centerX, centerY + 20, centerX + 50, centerY + 35);
-
-
     }
 
     public void moveRight()
     {
-        if (ducked == false)
-        {
-            speedX = MOVESPEED;
-        }
+        speedX = MOVESPEED;
     }
 
     public void moveLeft()
     {
-        if (ducked == false)
-        {
-            speedX = -MOVESPEED;
-        }
+        speedX = -MOVESPEED;
     }
 
     public void stopRight()
@@ -121,32 +91,22 @@ public class Robot
         stop();
     }
 
-    private void stop()
+    public void stop()
     {
-        if (isMovingRight() == false && isMovingLeft() == false)
-        {
-            speedX = 0;
-        }
-
-        if (isMovingRight() == false && isMovingLeft() == true)
-        {
-            moveLeft();
-        }
-
-        if (isMovingRight() == true && isMovingLeft() == false)
-        {
-            moveRight();
-        }
-
+        setMovingLeft(false);
+        setMovingRight(false);
+        speedX = 0;
     }
 
     public void jump()
     {
+        /*
         if (jumped == false)
         {
             speedY = JUMPSPEED;
             jumped = true;
         }
+        */
 
     }
 
@@ -169,11 +129,6 @@ public class Robot
         return centerY;
     }
 
-    public boolean isJumped()
-    {
-        return jumped;
-    }
-
     public int getSpeedX()
     {
         return speedX;
@@ -194,11 +149,6 @@ public class Robot
         this.centerY = centerY;
     }
 
-    public void setJumped(boolean jumped)
-    {
-        this.jumped = jumped;
-    }
-
     public void setSpeedX(int speedX)
     {
         this.speedX = speedX;
@@ -207,16 +157,6 @@ public class Robot
     public void setSpeedY(int speedY)
     {
         this.speedY = speedY;
-    }
-
-    public boolean isDucked()
-    {
-        return ducked;
-    }
-
-    public void setDucked(boolean ducked)
-    {
-        this.ducked = ducked;
     }
 
     public boolean isMovingRight()

@@ -2,6 +2,7 @@ package com.mustafathamer.RobotAndroid;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 import com.mustafathamer.framework.Game;
 import com.mustafathamer.framework.Graphics;
@@ -12,6 +13,11 @@ import com.mustafathamer.framework.Input.TouchEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import static android.R.attr.width;
+import static android.R.attr.x;
+import static android.R.attr.y;
+import static com.mustafathamer.RobotAndroid.Robot.rect;
 
 /**
  * Created by Mus on 11/25/2016.
@@ -49,9 +55,9 @@ public class GameScreen extends Screen
 
         // Initialize game objects here
 
-        bg1 = new Background(0, 0);
-        bg2 = new Background(2160, 0);
-        robot = new Robot();
+        bg1 = new Background(0, -Background.getHeight());
+        bg2 = new Background(0, 0);
+        robot = new Robot(game);
         hb = new Heliboy(340, 360);
         hb2 = new Heliboy(700, 360);
 
@@ -164,9 +170,11 @@ public class GameScreen extends Screen
             updateGameOver(touchEvents);
     }
 
+    //
+    // update for ready screen
+    //
     private void updateReady(List touchEvents)
     {
-
         // This example starts with a "Ready" screen.
         // When the user touches the screen, the game begins.
         // state now becomes GameState.Running.
@@ -176,11 +184,11 @@ public class GameScreen extends Screen
             state = GameState.Running;
     }
 
+    //
+    // update for game running
+    //
     private void updateRunning(List touchEvents, float deltaTime)
     {
-
-        // This is identical to the update() method from our Unit 2/3 game.
-
         // 1. All touch input is handled here:
         int len = touchEvents.size();
         for (int i = 0; i < len; i++)
@@ -188,60 +196,55 @@ public class GameScreen extends Screen
             TouchEvent event = (TouchEvent) touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_DOWN)
             {
+                Rect rLeft = new Rect();
+                Rect rShoot = new Rect();
+                Rect rRight = new Rect();
 
-                if (inBounds(event, 0, 285, 65, 65))
-                {
-                    robot.jump();
-                    currentSprite = anim.getImage();
-                    robot.setDucked(false);
-                } else if (inBounds(event, 0, 350, 65, 65))
-                {
+                getLeftButtonBounds(rLeft);
+                getShootButtonBounds(rShoot);
+                getRightButtonBounds(rRight);
 
-                    if (robot.isDucked() == false && robot.isJumped() == false
-                            && robot.isReadyToFire())
+                // SHOOT BUTTON
+                if (inBounds(event, rShoot.left, rShoot.top, rShoot.width(), rShoot.height()))
+                {
+                    if (robot.isReadyToFire())
                     {
                         robot.shoot();
                     }
-                } else if (inBounds(event, 0, 415, 65, 65)
-                        && robot.isJumped() == false)
-                {
-                    currentSprite = Assets.characterDown;
-                    robot.setDucked(true);
-                    robot.setSpeedX(0);
-
                 }
 
-                if (event.x > 400)
+                // MOVE LEFT BUTTON
+                if (inBounds(event, rLeft.left, rLeft.top, rLeft.width(), rLeft.height()))
                 {
-                    // Move right.
+                    robot.moveLeft();
+                    robot.setMovingLeft(true);
+                }
+                else
+                // MOVE RIGHT BUTTON
+                if (inBounds(event, rRight.left, rRight.top, rRight.width(), rRight.height()))
+                {
                     robot.moveRight();
                     robot.setMovingRight(true);
-
                 }
-
             }
 
             if (event.type == TouchEvent.TOUCH_UP)
             {
 
+                /*
                 if (inBounds(event, 0, 415, 65, 65))
                 {
                     currentSprite = anim.getImage();
-                    robot.setDucked(false);
-
                 }
+                */
 
+                // PAUSE BUTTON
                 if (inBounds(event, 0, 0, 35, 35))
                 {
                     pause();
-
                 }
 
-                if (event.x > 400)
-                {
-                    // Move right.
-                    robot.stopRight();
-                }
+                robot.stop();
             }
 
         }
@@ -255,15 +258,9 @@ public class GameScreen extends Screen
 
         // 3. Call individual update() methods here.
         // This is where all the game updates happen.
-        // For example, robot.update();
+
+        // TODO
         robot.update();
-        if (robot.isJumped())
-        {
-            currentSprite = Assets.characterJump;
-        } else if (robot.isJumped() == false && robot.isDucked() == false)
-        {
-            currentSprite = anim.getImage();
-        }
 
         ArrayList projectiles = robot.getProjectiles();
         for (int i = 0; i < projectiles.size(); i++)
@@ -285,10 +282,13 @@ public class GameScreen extends Screen
         bg2.update();
         animate();
 
+        // TODO - game over state
+        /*
         if (robot.getCenterY() > 500)
         {
             state = GameState.GameOver;
         }
+        */
     }
 
     private boolean inBounds(TouchEvent event, int x, int y, int width,
@@ -364,7 +364,9 @@ public class GameScreen extends Screen
 
         g.drawImage(Assets.background, bg1.getBgX(), bg1.getBgY());
         g.drawImage(Assets.background, bg2.getBgX(), bg2.getBgY());
-        paintTiles(g);
+
+        // TODO paint tiles
+        // paintTiles(g);
 
         ArrayList projectiles = robot.getProjectiles();
         for (int i = 0; i < projectiles.size(); i++)
@@ -372,18 +374,14 @@ public class GameScreen extends Screen
             Projectile p = (Projectile) projectiles.get(i);
             g.drawRect(p.getX(), p.getY(), 10, 5, Color.YELLOW);
         }
-        // First draw the game elements.
 
+        // First draw the game elements.
         g.drawImage(currentSprite, robot.getCenterX() - 61,
                 robot.getCenterY() - 63);
         g.drawImage(hanim.getImage(), hb.getCenterX() - 48,
                 hb.getCenterY() - 48);
         g.drawImage(hanim.getImage(), hb2.getCenterX() - 48,
                 hb2.getCenterY() - 48);
-
-        // Example:
-        // g.drawImage(Assets.background, 0, 0);
-        // g.drawImage(Assets.character, characterX, characterY);
 
         // Secondly, draw the UI above the game elements.
         if (state == GameState.Ready)
@@ -443,23 +441,55 @@ public class GameScreen extends Screen
 
     }
 
+    private void getLeftButtonBounds(Rect r)
+    {
+        Graphics g = game.getGraphics();
+        int startY = (int)(g.getHeight() * .9);
+        int buttonDim = 65;
+        int startX = (int)(g.getWidth()/2 - buttonDim * 1.5);
+
+        r.set(startX, startY, startX+buttonDim, startY+buttonDim);
+    }
+
+    private void getShootButtonBounds(Rect r)
+    {
+        Graphics g = game.getGraphics();
+        int startY = (int)(g.getHeight() * .9);
+        int buttonDim = 65;
+        int startX = (int)(g.getWidth()/2 - buttonDim * 1.5);
+        r.set(startX+buttonDim, startY, startX+buttonDim*2, startY+buttonDim);
+    }
+
+    private void getRightButtonBounds(Rect r)
+    {
+        Graphics g = game.getGraphics();
+        int startY = (int)(g.getHeight() * .9);
+        int buttonDim = 65;
+        int startX = (int)(g.getWidth()/2 - buttonDim * 1.5);
+
+        r.set(startX+buttonDim*2, startY, startX+buttonDim*3, startY+buttonDim);
+    }
+
     private void drawReadyUI()
     {
         Graphics g = game.getGraphics();
 
         g.drawARGB(155, 0, 0, 0);
-        g.drawString("Tap to Start.", 400, 240, paint);
-
+        g.drawString("Tap to Start.", g.getWidth()/2, g.getHeight()/2, paint);
     }
 
     private void drawRunningUI()
     {
         Graphics g = game.getGraphics();
-        g.drawImage(Assets.button, 0, 285, 0, 0, 65, 65);
-        g.drawImage(Assets.button, 0, 350, 0, 65, 65, 65);
-        g.drawImage(Assets.button, 0, 415, 0, 130, 65, 65);
-        g.drawImage(Assets.button, 0, 0, 0, 195, 35, 35);
+        int startY = (int)(g.getHeight() * .9);
+        int buttonDim = 65;
+        int startX = (int)(g.getWidth()/2 - buttonDim * 1.5);
 
+        // 3 button panel at bottom center of screen
+        g.drawImage(Assets.button, startX, startY,   0, 0,   buttonDim*3, buttonDim);
+
+        // pause button at top left
+        g.drawImage(Assets.button, 0, 0,    buttonDim*3, 35,    35, 35);
     }
 
     private void drawPausedUI()
@@ -467,17 +497,16 @@ public class GameScreen extends Screen
         Graphics g = game.getGraphics();
         // Darken the entire screen so you can display the Paused screen.
         g.drawARGB(155, 0, 0, 0);
-        g.drawString("Resume", 400, 165, paint2);
-        g.drawString("Menu", 400, 360, paint2);
-
+        g.drawString("Resume", g.getWidth()/2, g.getHeight()/2, paint2);
+        g.drawString("Menu", g.getWidth()/2, g.getHeight()/2+100, paint2);
     }
 
     private void drawGameOverUI()
     {
         Graphics g = game.getGraphics();
         g.drawRect(0, 0, 1281, 801, Color.BLACK);
-        g.drawString("GAME OVER.", 400, 240, paint2);
-        g.drawString("Tap to return.", 400, 290, paint);
+        g.drawString("GAME OVER.", g.getWidth()/2, g.getHeight()/2, paint2);
+        g.drawString("Tap to return.", g.getWidth()/2, g.getHeight()/2 + 100, paint);
 
     }
 
@@ -510,26 +539,21 @@ public class GameScreen extends Screen
 
     private void goToMenu()
     {
-        // TODO Auto-generated method stub
         game.setScreen(new MainMenuScreen(game));
-
     }
 
     public static Background getBg1()
     {
-        // TODO Auto-generated method stub
         return bg1;
     }
 
     public static Background getBg2()
     {
-        // TODO Auto-generated method stub
         return bg2;
     }
 
     public static Robot getRobot()
     {
-        // TODO Auto-generated method stub
         return robot;
     }
 

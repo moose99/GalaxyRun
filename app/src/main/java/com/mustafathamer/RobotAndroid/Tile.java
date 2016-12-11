@@ -55,7 +55,7 @@ public class Tile
 
     public void update()
     {
-        speedX = bg.getSpeedX() * 5;
+        speedX = bg.getSpeedY() * 5;
         tileX += speedX;
         r.set(tileX, tileY, tileX + 40, tileY + 40);
 
@@ -107,7 +107,6 @@ public class Tile
 
         if (Rect.intersects(rbot, r) && type == 8)
         {
-            robot.setJumped(false);
             robot.setSpeedY(0);
             robot.setCenterY(tileY - 63);
         }

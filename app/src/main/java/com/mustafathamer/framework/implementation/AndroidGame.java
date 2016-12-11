@@ -53,7 +53,8 @@ public abstract class AndroidGame extends Activity implements Game
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        // create framebuffer for portrait or landscape view, 1280 x 800
+        // create framebuffer for portrait or landscape view, 800 x 480
+        // we'll be using portrait only (set in AndroidManifest)
         boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
         int frameBufferWidth = isPortrait ? 480 : 800;
         int frameBufferHeight = isPortrait ? 800 : 480;

@@ -31,7 +31,7 @@ public class LoadingScreen extends Screen
     {
         Graphics g = game.getGraphics();
         Assets.menu = g.newImage("menu.png", ImageFormat.RGB565);
-        Assets.background = g.newImage("background.png", ImageFormat.RGB565);
+        Assets.background = g.newImage("starfield_bg.png", ImageFormat.RGB565);
         Assets.character = g.newImage("character.png", ImageFormat.ARGB4444);
         Assets.character2 = g.newImage("character2.png", ImageFormat.ARGB4444);
         Assets.character3 = g.newImage("character3.png", ImageFormat.ARGB4444);
@@ -65,7 +65,8 @@ public class LoadingScreen extends Screen
     public void paint(float deltaTime)
     {
         Graphics g = game.getGraphics();
-        g.drawImage(Assets.splash, 0, 0);
+        // TODO - change splash
+        // g.drawImage(Assets.splash, 0, 0);
     }
 
     @Override

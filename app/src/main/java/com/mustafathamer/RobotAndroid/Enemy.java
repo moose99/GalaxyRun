@@ -22,7 +22,7 @@ public class Enemy
     {
         follow();
         centerX += speedX;
-        speedX = bg.getSpeedX() * 5 + movementSpeed;
+        speedX = bg.getSpeedY() * 5 + movementSpeed;
         r.set(centerX - 25, centerY - 25, centerX + 25, centerY + 35);
 
         if (Rect.intersects(r, Robot.yellowRed))
