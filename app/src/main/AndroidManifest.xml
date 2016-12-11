@@ -21,7 +21,7 @@
             android:name="com.mustafathamer.RobotAndroid.RobotAndroidGame"
             android:configChanges="keyboard|keyboardHidden|orientation"
             android:label="RobotAndroid"
-            android:screenOrientation="landscape" >
+            android:screenOrientation="userPortrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
