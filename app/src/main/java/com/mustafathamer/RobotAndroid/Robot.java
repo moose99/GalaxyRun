@@ -14,7 +14,7 @@ public class Robot
 {
 
     // Constants are Here
-    final int MOVESPEED = 5;
+    public static int MOVESPEED = 5;
 
     private Game game;
     private int centerX;
@@ -73,10 +73,13 @@ public class Robot
     {
         speedX = MOVESPEED;
     }
+    public void moveLeft()  { speedX = -MOVESPEED; }
 
-    public void moveLeft()
+    public void move(int amt)
     {
-        speedX = -MOVESPEED;
+        speedX = amt;
+        if (amt==0)
+            stop();
     }
 
     public void stopRight()
