@@ -1,6 +1,7 @@
 package com.mustafathamer.RobotAndroid;
 
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.mustafathamer.framework.Game;
 
@@ -19,8 +20,6 @@ public class Robot
     private Game game;
     private int centerX;
     private int centerY;
-    private boolean movingLeft = false;
-    private boolean movingRight = false;
     private boolean readyToFire = true;
 
     private int speedX = 0;
@@ -53,12 +52,21 @@ public class Robot
         // Moves Character
 
         centerX += speedX;
+        centerY += speedY;
 
         // CLAMP
         if (centerX > game.getGraphics().getWidth())
             centerX = game.getGraphics().getWidth();
         if (centerX < 0)
             centerX = 0;
+
+        if (centerY > (int)(game.getGraphics().getHeight() *.9) )
+            centerY = (int)(game.getGraphics().getHeight() * .9);
+        if (centerY < (int)(game.getGraphics().getHeight() *.5) )
+            centerY = (int)(game.getGraphics().getHeight() * .5);
+
+//        Log.i("MOOSE", "ctrX=" + centerX+ ", ctrY=" + centerY +
+//                ", speedX=" + speedX + ", speedY=" + speedY);
 
         rect.set(centerX - 34, centerY - 63, centerX + 34, centerY);
         rect2.set(rect.left, rect.top + 63, rect.left + 68, rect.top + 128);
@@ -67,50 +75,13 @@ public class Robot
         yellowRed.set(centerX - 110, centerY - 110, centerX + 70, centerY + 70);
         footleft.set(centerX - 50, centerY + 20, centerX, centerY + 35);
         footright.set(centerX, centerY + 20, centerX + 50, centerY + 35);
-    }
 
-    public void moveRight()
-    {
-        speedX = MOVESPEED;
-    }
-    public void moveLeft()  { speedX = -MOVESPEED; }
-
-    public void move(int amt)
-    {
-        speedX = amt;
-        if (amt==0)
-            stop();
-    }
-
-    public void stopRight()
-    {
-        setMovingRight(false);
-        stop();
-    }
-
-    public void stopLeft()
-    {
-        setMovingLeft(false);
         stop();
     }
 
     public void stop()
     {
-        setMovingLeft(false);
-        setMovingRight(false);
-        speedX = 0;
-    }
-
-    public void jump()
-    {
-        /*
-        if (jumped == false)
-        {
-            speedY = JUMPSPEED;
-            jumped = true;
-        }
-        */
-
+        speedX = speedY = 0;
     }
 
     public void shoot()
@@ -160,26 +131,6 @@ public class Robot
     public void setSpeedY(int speedY)
     {
         this.speedY = speedY;
-    }
-
-    public boolean isMovingRight()
-    {
-        return movingRight;
-    }
-
-    public void setMovingRight(boolean movingRight)
-    {
-        this.movingRight = movingRight;
-    }
-
-    public boolean isMovingLeft()
-    {
-        return movingLeft;
-    }
-
-    public void setMovingLeft(boolean movingLeft)
-    {
-        this.movingLeft = movingLeft;
     }
 
     public ArrayList getProjectiles()

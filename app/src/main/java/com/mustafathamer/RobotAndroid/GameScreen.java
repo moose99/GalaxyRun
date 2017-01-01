@@ -58,6 +58,7 @@ public class GameScreen extends Screen
     private Paint paint, paint2;
 
     private int prevMoveEventX = 0;
+    private int prevMoveEventY = 0;
     private Rect shootButtonBounds = new Rect();
 
     public GameScreen(Game game)
@@ -217,7 +218,7 @@ public class GameScreen extends Screen
             // SHOOT BUTTON
             boolean shootButtonEvent = inBounds(event, shootButtonBounds.left, shootButtonBounds.top, shootButtonBounds.width(), shootButtonBounds.height());
             boolean pauseEvent = inBounds(event, 0, 0, 35, 35);
-            boolean moveShipEvent = (event.y > game.getGraphics().getHeight() * .5) && event.pointer == 0;
+            boolean moveShipEvent = (event.y > game.getGraphics().getHeight() * .2) && event.pointer == 0;
 
 //            Log.i("MOOSE", "Event, PrevX=" + prevMoveEventX + ", X=" + event.x + ", Y=" + event.y + ", Type=" + event.type
 //            + ", Ptr=" + event.pointer);
@@ -243,41 +244,50 @@ public class GameScreen extends Screen
             // Move ship
             if (moveShipEvent && event.type == TouchEvent.TOUCH_DRAGGED)
             {
-                boolean moveLeft = false;
-                boolean moveRight = false;
-                int diffX = event.x - prevMoveEventX;
+                boolean moveX = false;
+                boolean moveY = false;
+                int diffX = (prevMoveEventX != 0) ? event.x - prevMoveEventX : 0;
+                int diffY = (prevMoveEventY != 0) ? event.y - prevMoveEventY : 0;
 
                 if (diffX > 0)
                 {
-                    moveRight = true;
+                    moveX = true;
                     diffX = Math.min(diffX, Robot.MOVESPEED * 5);   // clamp
                 }
                 if (diffX < 0)
                 {
-                    moveLeft = true;
+                    moveX = true;
                     diffX = Math.max(diffX, -Robot.MOVESPEED * 5);  // clamp
 
                 }
 
+                if (diffY > 0)
+                {
+                    moveY = true;
+                    diffY = Math.min(diffY, Robot.MOVESPEED * 5);   // clamp
+                }
+                if (diffY < 0)
+                {
+                    moveY = true;
+                    diffY = Math.max(diffY, -Robot.MOVESPEED * 5);   // clamp
+                }
+
 //                Log.i("\tMOOSE", "\tdiffX=" + diffX + ", moveLeft=" + moveLeft + ", moveRight=" + moveRight);
 
-                // MOVE LEFT
-                if (moveLeft)
+                // MOVE LEFT OR RIGHT
+                if (moveX)
                 {
-                    robot.move(diffX);
-                    robot.setMovingLeft(true);
-                } else
-                    // MOVE RIGHT
-                    if (moveRight)
-                    {
-                        robot.move(diffX);
-                        robot.setMovingRight(true);
-                    } else
-                    {
-                        robot.stop();
-                    }
+                    robot.setSpeedX(diffX);
+                }
+
+                // MOVE UP OR DOWN
+                if (moveY)
+                {
+                    robot.setSpeedY(diffY);
+                }
 
                 prevMoveEventX = event.x;
+                prevMoveEventY = event.y;
             }
 
         }
