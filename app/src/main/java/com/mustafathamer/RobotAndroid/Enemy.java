@@ -25,7 +25,7 @@ public class Enemy
         speedX = bg.getSpeedY() * 5 + movementSpeed;
         r.set(centerX - 25, centerY - 25, centerX + 25, centerY + 35);
 
-        if (Rect.intersects(r, Robot.yellowRed))
+        if (Rect.intersects(r, Robot.bounds))
         {
             checkCollision();
         }
@@ -35,8 +35,7 @@ public class Enemy
 
     private void checkCollision()
     {
-        if (Rect.intersects(r, Robot.rect) || Rect.intersects(r, Robot.rect2)
-                || Rect.intersects(r, Robot.rect3) || Rect.intersects(r, Robot.rect4))
+        if (Rect.intersects(r, Robot.bounds))
         {
 
         }

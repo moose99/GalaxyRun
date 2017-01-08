@@ -7,7 +7,7 @@ package com.mustafathamer.framework;
 
 public interface Audio
 {
-    Music createMusic(String file);
-
-    Sound createSound(String file);
+    Music createMusic(String file);     // create music interface
+    Sound createSound(String file);     // creates sound interface
+    int getBestSampleRate();            // returns the HW sample rate
 }

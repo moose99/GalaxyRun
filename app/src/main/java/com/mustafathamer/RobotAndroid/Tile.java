@@ -60,10 +60,9 @@ public class Tile
         r.set(tileX, tileY, tileX + 40, tileY + 40);
 
 
-        if (Rect.intersects(r, Robot.yellowRed) && type != 0)
+        if (Rect.intersects(r, Robot.bounds) && type != 0)
         {
-            checkVerticalCollision(Robot.rect, Robot.rect2);
-            checkSideCollision(Robot.rect3, Robot.rect4, Robot.footleft, Robot.footright);
+            // TODO tile collision check
         }
 
     }
@@ -98,6 +97,7 @@ public class Tile
         this.tileImage = tileImage;
     }
 
+    /*
     public void checkVerticalCollision(Rect rtop, Rect rbot)
     {
         if (Rect.intersects(rtop, r))
@@ -141,5 +141,6 @@ public class Tile
             }
         }
     }
+    */
 
 }

@@ -1,5 +1,7 @@
 package com.mustafathamer.RobotAndroid;
 
+import android.util.Log;
+
 import com.mustafathamer.framework.Game;
 import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Graphics.ImageFormat;
@@ -32,11 +34,12 @@ public class LoadingScreen extends Screen
         Graphics g = game.getGraphics();
         Assets.menu = g.newImage("menu.png", ImageFormat.RGB565);
         Assets.background = g.newImage("starfield_bg.png", ImageFormat.RGB565);
-        Assets.character = g.newImage("character.png", ImageFormat.ARGB4444);
-        Assets.character2 = g.newImage("character2.png", ImageFormat.ARGB4444);
-        Assets.character3 = g.newImage("character3.png", ImageFormat.ARGB4444);
-        Assets.characterJump = g.newImage("jumped.png", ImageFormat.ARGB4444);
-        Assets.characterDown = g.newImage("down.png", ImageFormat.ARGB4444);
+
+        // use ARGB8888 for highest quality, with alpha
+        Assets.player = g.newImage("player.png", ImageFormat.ARGB8888);
+        Assets.playerLeft = g.newImage("playerLeft.png", ImageFormat.ARGB8888);
+        Assets.playerRight = g.newImage("playerRight.png", ImageFormat.ARGB8888);
+        Assets.playerDamaged = g.newImage("playerDamaged.png", ImageFormat.ARGB8888);
 
 
         Assets.heliboy = g.newImage("heliboy.png", ImageFormat.ARGB4444);
@@ -54,11 +57,13 @@ public class LoadingScreen extends Screen
 
         Assets.button = g.newImage("button.jpg", ImageFormat.RGB565);
 
-        //This is how you would load a sound if you had one.
-        //Assets.click = game.getAudio().createSound("explode.ogg");
+        int hwAudioSampleRate = game.getAudio().getBestSampleRate();
+        Log.i("MOOSE", "hwAudioSampleRate: " + hwAudioSampleRate);
+
+        // TODO load audio format based on hwAudioSampleRate, to allow for fast playback (avoid conversion)
+        Assets.playerLaser = game.getAudio().createSound("playerLaser_48khz.wav");
 
         game.setScreen(new MainMenuScreen(game));
-
     }
 
     @Override

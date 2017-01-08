@@ -7,6 +7,8 @@ import com.mustafathamer.framework.Game;
 
 import java.util.ArrayList;
 
+import static android.R.attr.width;
+
 /**
  * Created by Mus on 11/26/2016.
  */
@@ -15,23 +17,19 @@ public class Robot
 {
 
     // Constants are Here
-    public static int MOVESPEED = 5;
+    public final int MOVESPEED = 5;
+    public final int WIDTH = 99;   // from image
+    public final int HEIGHT = 75;  // from image
 
     private Game game;
     private int centerX;
     private int centerY;
     private boolean readyToFire = true;
-
+    private boolean movingLeft = false;
+    private boolean movingRight = false;
     private int speedX = 0;
     private int speedY = 0;
-    public static Rect rect = new Rect(0, 0, 0, 0);
-    public static Rect rect2 = new Rect(0, 0, 0, 0);
-    public static Rect rect3 = new Rect(0, 0, 0, 0);
-    public static Rect rect4 = new Rect(0, 0, 0, 0);
-    public static Rect yellowRed = new Rect(0, 0, 0, 0);
-
-    public static Rect footleft = new Rect(0, 0, 0, 0);
-    public static Rect footright = new Rect(0, 0, 0, 0);
+    public static Rect bounds = new Rect(0, 0, 0, 0);
 
     private Background bg1 = GameScreen.getBg1();
     private Background bg2 = GameScreen.getBg2();
@@ -54,7 +52,7 @@ public class Robot
         centerX += speedX;
         centerY += speedY;
 
-        // CLAMP
+        // CLAMP to screen edge
         if (centerX > game.getGraphics().getWidth())
             centerX = game.getGraphics().getWidth();
         if (centerX < 0)
@@ -68,27 +66,22 @@ public class Robot
 //        Log.i("MOOSE", "ctrX=" + centerX+ ", ctrY=" + centerY +
 //                ", speedX=" + speedX + ", speedY=" + speedY);
 
-        rect.set(centerX - 34, centerY - 63, centerX + 34, centerY);
-        rect2.set(rect.left, rect.top + 63, rect.left + 68, rect.top + 128);
-        rect3.set(rect.left - 26, rect.top + 32, rect.left, rect.top + 52);
-        rect4.set(rect.left + 68, rect.top + 32, rect.left + 94, rect.top + 52);
-        yellowRed.set(centerX - 110, centerY - 110, centerX + 70, centerY + 70);
-        footleft.set(centerX - 50, centerY + 20, centerX, centerY + 35);
-        footright.set(centerX, centerY + 20, centerX + 50, centerY + 35);
-
-        stop();
+        bounds.set(centerX - (int)(WIDTH*.5), centerY - (int)(HEIGHT*.5),
+                centerX + (int)(WIDTH*.5), centerY + (int)(HEIGHT*.5));
     }
 
     public void stop()
     {
         speedX = speedY = 0;
+        movingLeft = movingRight = false;
     }
 
     public void shoot()
     {
         if (readyToFire)
         {
-            Projectile p = new Projectile(centerX + 50, centerY - 25);
+
+            Projectile p = new Projectile(centerX-2, centerY - 25);
             projectiles.add(p);
         }
     }
@@ -112,6 +105,15 @@ public class Robot
     {
         return speedY;
     }
+    public boolean getMovingLeft()
+    {
+        return movingLeft;
+    }
+    public boolean getMovingRight()
+    {
+        return movingRight;
+    }
+
 
     public void setCenterX(int centerX)
     {
@@ -146,6 +148,18 @@ public class Robot
     public void setReadyToFire(boolean readyToFire)
     {
         this.readyToFire = readyToFire;
+    }
+    public void setMovingLeft(boolean movingLeft)
+    {
+        this.movingLeft = movingLeft;
+        if (movingLeft)
+            this.movingRight = false;
+    }
+    public void setMovingRight(boolean movingRight)
+    {
+        this.movingRight = movingRight;
+        if (movingRight)
+            this.movingLeft = false;
     }
 
 }

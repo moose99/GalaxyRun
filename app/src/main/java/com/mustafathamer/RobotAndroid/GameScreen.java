@@ -10,11 +10,13 @@ import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Screen;
 import com.mustafathamer.framework.Image;
 import com.mustafathamer.framework.Input.TouchEvent;
+import com.mustafathamer.framework.Sound;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/*
 import static android.R.attr.width;
 import static android.R.attr.x;
 import static android.R.attr.y;
@@ -25,6 +27,7 @@ import static com.mustafathamer.RobotAndroid.Assets.heliboy3;
 import static com.mustafathamer.RobotAndroid.Assets.heliboy4;
 import static com.mustafathamer.RobotAndroid.Assets.heliboy5;
 import static com.mustafathamer.RobotAndroid.Robot.rect;
+*/
 
 /**
  * Created by Mus on 11/25/2016.
@@ -47,11 +50,12 @@ public class GameScreen extends Screen
     private static Robot robot;
     //   public static Heliboy hb, hb2;
 
-    private Image currentSprite, character, character2, character3;
+    private Image playerSprite, player, playerLeft, playerRight, playerDamaged;
     // private Image heliboy, heliboy2, heliboy3, heliboy4, heliboy5;
-    private Animation anim;
+    private Animation playerAnim;
 //    private Animation hanim;
 
+    private Sound playerLaser;
     private ArrayList tilearray = new ArrayList();
 
     private int livesLeft = 1;
@@ -78,9 +82,12 @@ public class GameScreen extends Screen
         hb2 = new Heliboy(700, 360);
 */
 
-        character = Assets.character;
-        character2 = Assets.character2;
-        character3 = Assets.character3;
+        player = Assets.player;
+        playerRight = Assets.playerRight;
+        playerLeft = Assets.playerLeft;
+        playerDamaged = Assets.playerDamaged;
+
+        playerLaser = Assets.playerLaser;
 
         /*
         heliboy = Assets.heliboy;
@@ -90,11 +97,9 @@ public class GameScreen extends Screen
         heliboy5 = Assets.heliboy5;
     */
 
-        anim = new Animation();
-        anim.addFrame(character, 1250);
-        anim.addFrame(character2, 50);
-        anim.addFrame(character3, 50);
-        anim.addFrame(character2, 50);
+        // player ship is currently a 1 frame anim (doesn't really need to be an anim)
+        playerAnim = new Animation();
+        playerAnim.addFrame(player, 1000);
 
         /*
         hanim = new Animation();
@@ -107,8 +112,6 @@ public class GameScreen extends Screen
         hanim.addFrame(heliboy3, 100);
         hanim.addFrame(heliboy2, 100);
 */
-
-        currentSprite = anim.getImage();
 
         loadMap();
 
@@ -228,6 +231,7 @@ public class GameScreen extends Screen
                 if (robot.isReadyToFire())
                 {
                     robot.shoot();
+                    playerLaser.play(1.0f);
                 }
             }
 
@@ -246,34 +250,47 @@ public class GameScreen extends Screen
             {
                 boolean moveX = false;
                 boolean moveY = false;
+
                 int diffX = (prevMoveEventX != 0) ? event.x - prevMoveEventX : 0;
                 int diffY = (prevMoveEventY != 0) ? event.y - prevMoveEventY : 0;
 
                 if (diffX > 0)
                 {
                     moveX = true;
-                    diffX = Math.min(diffX, Robot.MOVESPEED * 5);   // clamp
+                    diffX = Math.min(diffX, robot.MOVESPEED * 5);   // clamp
                 }
-                if (diffX < 0)
+                else if (diffX < 0)
                 {
                     moveX = true;
-                    diffX = Math.max(diffX, -Robot.MOVESPEED * 5);  // clamp
+                    diffX = Math.max(diffX, -robot.MOVESPEED * 5);  // clamp
+                }
 
+                if (diffX > 3)
+                    robot.setMovingRight(true);
+                else
+                if (diffX < -3)
+                    robot.setMovingLeft(true);
+                else
+                if (Math.abs(diffX) < 1)
+                {
+                    robot.setMovingRight(false);
+                    robot.setMovingLeft(false);
                 }
 
                 if (diffY > 0)
                 {
                     moveY = true;
-                    diffY = Math.min(diffY, Robot.MOVESPEED * 5);   // clamp
+                    diffY = Math.min(diffY, robot.MOVESPEED * 5);   // clamp
                 }
                 if (diffY < 0)
                 {
                     moveY = true;
-                    diffY = Math.max(diffY, -Robot.MOVESPEED * 5);   // clamp
+                    diffY = Math.max(diffY, -robot.MOVESPEED * 5);   // clamp
                 }
 
 //                Log.i("\tMOOSE", "\tdiffX=" + diffX + ", moveLeft=" + moveLeft + ", moveRight=" + moveRight);
 
+                /*
                 // MOVE LEFT OR RIGHT
                 if (moveX)
                 {
@@ -285,11 +302,15 @@ public class GameScreen extends Screen
                 {
                     robot.setSpeedY(diffY);
                 }
+                */
+
+                // set robot above the touch point
+                robot.setCenterX(event.x);
+                robot.setCenterY(event.y - 75);
 
                 prevMoveEventX = event.x;
                 prevMoveEventY = event.y;
             }
-
         }
 
 // 2. Check miscellaneous events like death:
@@ -411,6 +432,7 @@ public class GameScreen extends Screen
         g.drawImage(Assets.background, bg1.getBgX(), bg1.getBgY());
         g.drawImage(Assets.background, bg2.getBgX(), bg2.getBgY());
 
+
         // TODO paint tiles
         // paintTiles(g);
 
@@ -418,12 +440,18 @@ public class GameScreen extends Screen
         for (int i = 0; i < projectiles.size(); i++)
         {
             Projectile p = (Projectile) projectiles.get(i);
-            g.drawRect(p.getX(), p.getY(), 10, 5, Color.YELLOW);
+            g.drawRect(p.getX(), p.getY(), 4, 4, Color.YELLOW);
         }
 
         // First draw the game elements.
-        g.drawImage(currentSprite, robot.getCenterX() - 61,
-                robot.getCenterY() - 63);
+        playerSprite = playerAnim.getImage();
+        if (robot.getMovingLeft())
+            playerSprite = playerLeft;
+        else
+        if (robot.getMovingRight())
+            playerSprite = playerRight;
+
+        g.drawImage(playerSprite, robot.getCenterX() - (int)(robot.WIDTH*.5), robot.getCenterY() - (int)(robot.HEIGHT*.5));
 
         /*
         g.drawImage(hanim.getImage(), hb.getCenterX() - 48,
@@ -455,9 +483,10 @@ public class GameScreen extends Screen
         }
     }
 
+    // TODO pass elapsed time into animate()
     public void animate()
     {
-        anim.update(10);
+        playerAnim.update(10);
         //       hanim.update(50);
     }
 
@@ -472,10 +501,11 @@ public class GameScreen extends Screen
         robot = null;
 //        hb = null;
 //        hb2 = null;
-        currentSprite = null;
-        character = null;
-        character2 = null;
-        character3 = null;
+        playerSprite = null;
+        player = null;
+        playerLeft = null;
+        playerRight = null;
+        playerDamaged = null;
  /*
         heliboy = null;
 
@@ -484,7 +514,7 @@ public class GameScreen extends Screen
         heliboy4 = null;
         heliboy5 = null;
 */
-        anim = null;
+        playerAnim = null;
 //        hanim = null;
 
         // Call garbage collector to clean up memory.
