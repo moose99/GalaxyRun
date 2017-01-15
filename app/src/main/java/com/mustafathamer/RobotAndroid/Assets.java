@@ -23,6 +23,8 @@ public class Assets
     public static Sound playerLaser, playerCrash;
     public static Music theme;
 
+    // TODO - this should probably load all the assets, only. Play the music in the loading or menu screen
+    // TODO - organize assets by level?
     public static void load(RobotAndroidGame sampleGame)
     {
         theme = sampleGame.getAudio().createMusic("xeon6.ogg"); //"Lines of Code.mp3");

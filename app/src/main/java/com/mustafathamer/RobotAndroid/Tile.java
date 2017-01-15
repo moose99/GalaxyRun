@@ -21,10 +21,10 @@ public class Tile
 
     private Robot robot = GameScreen.getRobot();
     private Background bg = GameScreen.getBg1();
-    final private int width = 40;
-    final private int height = 40;
-    final private int tileMapWidth = 12*width;
-    final private int tileMapHeight = 300*height;
+    final static public int width = 40;
+    final static public int height = 40;
+    final private int tileMapWidth = 12*width;      // 480 pixels
+    final private int tileMapHeight = 300*height;   // 2400 pixels
     private Rect r;
 
     public Tile(int x, int y, int typeInt)

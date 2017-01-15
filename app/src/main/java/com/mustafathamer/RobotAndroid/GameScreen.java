@@ -58,7 +58,7 @@ public class GameScreen extends Screen
 //    private Animation hanim;
 
     private Sound playerLaser;
-    private ArrayList tilearray = new ArrayList();
+    private TileMap tileMap;
 
     private int livesLeft = 1;
     private Paint paint, paint2;
@@ -118,8 +118,8 @@ public class GameScreen extends Screen
         hanim.addFrame(heliboy2, 100);
 */
 
-        // load tile map
-        loadMap();
+        tileMap = new TileMap();
+        tileMap.load();
 
         // Defining a paint object
         paint = new Paint();
@@ -133,54 +133,6 @@ public class GameScreen extends Screen
         paint2.setTextAlign(Paint.Align.CENTER);
         paint2.setAntiAlias(true);
         paint2.setColor(Color.WHITE);
-    }
-
-    //
-    // load tile map
-    //
-    private void loadMap()
-    {
-        ArrayList lines = new ArrayList();
-        int width = 0;
-        int height = 0;
-
-        // read lines from tile map txt file
-        Scanner scanner = new Scanner(RobotAndroidGame.map);
-        while (scanner.hasNextLine())
-        {
-            String line = scanner.nextLine();
-
-            // no more lines to read
-            if (line == null)
-            {
-                break;
-            }
-
-            if (!line.startsWith("!"))
-            {
-                lines.add(line);
-                width = Math.max(width, line.length());
-
-            }
-        }
-
-        // read tile characters from each line
-        height = lines.size();
-        for (int j = 0; j < height; j++)
-        {
-            String line = (String) lines.get(j);
-            for (int i = 0; i < width; i++)
-            {
-                if (i < line.length())
-                {
-                    char ch = line.charAt(i);
-                    // TODO fix tile ids
-//                    Tile t = new Tile(i, j, Character.getNumericValue(ch));
-                    Tile t = new Tile(j, i, Character.getNumericValue(ch));
-                    tilearray.add(t);
-                }
-            }
-        }
     }
 
     @Override
@@ -350,7 +302,8 @@ public class GameScreen extends Screen
             }
         }
 
-        updateTiles();
+        tileMap.update();
+
         /*
         hb.update();
         hb2.update();
@@ -423,17 +376,6 @@ public class GameScreen extends Screen
 
     }
 
-    // move all tiles
-    private void updateTiles()
-    {
-        for (int i = 0; i < tilearray.size(); i++)
-        {
-            Tile t = (Tile) tilearray.get(i);
-            t.update();
-        }
-
-    }
-
     @Override
     public void paint(float deltaTime)
     {
@@ -442,7 +384,7 @@ public class GameScreen extends Screen
         g.drawImage(Assets.background, bg1.getBgX(), bg1.getBgY());
         g.drawImage(Assets.background, bg2.getBgX(), bg2.getBgY());
 
-        paintTiles(g);
+        tileMap.draw(g);
 
         ArrayList projectiles = robot.getProjectiles();
         for (int i = 0; i < projectiles.size(); i++)
@@ -477,18 +419,6 @@ public class GameScreen extends Screen
         if (state == GameState.GameOver)
             drawGameOverUI();
 
-    }
-
-    private void paintTiles(Graphics g)
-    {
-        for (int i = 0; i < tilearray.size(); i++)
-        {
-            Tile t = (Tile) tilearray.get(i);
-            if (t.type != 0)
-            {
-                g.drawImage(t.getTileImage(), t.getTileX(), t.getTileY());
-            }
-        }
     }
 
     // TODO pass elapsed time into animate()
