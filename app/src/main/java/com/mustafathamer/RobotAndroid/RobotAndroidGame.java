@@ -24,7 +24,6 @@ import java.io.InputStreamReader;
 
 public class RobotAndroidGame extends AndroidGame
 {
-
     public static String map;
     boolean firstTimeCreate = true;
 

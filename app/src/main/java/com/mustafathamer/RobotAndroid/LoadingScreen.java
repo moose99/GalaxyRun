@@ -62,6 +62,7 @@ public class LoadingScreen extends Screen
 
         // TODO load audio format based on hwAudioSampleRate, to allow for fast playback (avoid conversion)
         Assets.playerLaser = game.getAudio().createSound("playerLaser_48khz.wav");
+        Assets.playerCrash = game.getAudio().createSound("playerCrash.wav");
 
         game.setScreen(new MainMenuScreen(game));
     }

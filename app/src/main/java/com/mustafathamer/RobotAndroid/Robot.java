@@ -35,6 +35,7 @@ public class Robot
     private Background bg2 = GameScreen.getBg2();
 
     private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+    private long lastCrashTime;
 
     //
     // position at center near the bottom
@@ -43,6 +44,7 @@ public class Robot
         this.game = game;
         centerX = game.getGraphics().getWidth() / 2;
         centerY = (int) (game.getGraphics().getHeight() * 0.8);
+        lastCrashTime = 0;
     }
 
     public void update()
@@ -83,6 +85,20 @@ public class Robot
 
             Projectile p = new Projectile(centerX-2, centerY - 25);
             projectiles.add(p);
+        }
+    }
+
+    //
+    // play crash time (once every half second)
+    //
+    public void crash()
+    {
+        long curTime = System.currentTimeMillis();
+        if (curTime - lastCrashTime > 500)
+        {
+            // TODO - use Assets directly or cache in GameServer copy?
+            Assets.playerCrash.play(1.0f);
+            lastCrashTime = curTime;
         }
     }
 

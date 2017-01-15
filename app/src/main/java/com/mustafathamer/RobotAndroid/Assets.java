@@ -20,14 +20,14 @@ public class Assets
     public static Image tiledirt, tilegrassTop, tilegrassBot, tilegrassLeft, tilegrassRight, characterJump, characterDown;
     public static Image player, playerLeft, playerRight, playerDamaged;
     public static Image button;
-    public static Sound playerLaser;
+    public static Sound playerLaser, playerCrash;
     public static Music theme;
 
     public static void load(RobotAndroidGame sampleGame)
     {
-        theme = sampleGame.getAudio().createMusic("menutheme.mp3");
+        theme = sampleGame.getAudio().createMusic("xeon6.ogg"); //"Lines of Code.mp3");
         theme.setLooping(true);
-        theme.setVolume(0.85f);
+        theme.setVolume(0.8f);
         theme.play();
     }
 
