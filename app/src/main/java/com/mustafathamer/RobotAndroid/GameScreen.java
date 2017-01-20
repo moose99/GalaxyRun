@@ -3,7 +3,6 @@ package com.mustafathamer.RobotAndroid;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 
 import com.mustafathamer.framework.Game;
 import com.mustafathamer.framework.Graphics;
@@ -14,13 +13,8 @@ import com.mustafathamer.framework.Sound;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /*
-import static android.R.attr.width;
-import static android.R.attr.x;
-import static android.R.attr.y;
-import static android.R.transition.move;
 import static com.mustafathamer.RobotAndroid.Assets.heliboy;
 import static com.mustafathamer.RobotAndroid.Assets.heliboy2;
 import static com.mustafathamer.RobotAndroid.Assets.heliboy3;
@@ -46,7 +40,8 @@ public class GameScreen extends Screen
 
     // Variable Setup
 
-    private static Background bg1, bg2;
+    private Background bg1, bg2;
+    private int curBgIdx;
     private static Robot robot;
     //   public static Heliboy hb, hb2;
 
@@ -78,14 +73,16 @@ public class GameScreen extends Screen
 
         // Initialize game objects here
 
-        bg1 = new Background(0, -Background.getHeight());
-        bg2 = new Background(0, 0);
-        robot = new Robot(game);
+        // Create backgrounds
+        // X,Y specifies where upper left of image goes, with 0,0 at upper left of screen
+        int bgY = -(Assets.bgImg2.getHeight() - gameHeight);
+        bg2 = new Background(Assets.bgImg2, 0, bgY, 2);
 
-        /*
-        hb = new Heliboy(340, 360);
-        hb2 = new Heliboy(700, 360);
-*/
+        bgY -= Assets.bgImg1.getHeight();
+        bg1 = new Background(Assets.bgImg1, 0, bgY, 1);
+        curBgIdx = 2;
+
+        robot = new Robot(game);
 
         player = Assets.player;
         playerRight = Assets.playerRight;
@@ -93,14 +90,6 @@ public class GameScreen extends Screen
         playerDamaged = Assets.playerDamaged;
 
         playerLaser = Assets.playerLaser;
-
-        /*
-        heliboy = Assets.heliboy;
-        heliboy2 = Assets.heliboy2;
-        heliboy3 = Assets.heliboy3;
-        heliboy4 = Assets.heliboy4;
-        heliboy5 = Assets.heliboy5;
-    */
 
         // player ship is currently a 1 frame anim (doesn't really need to be an anim)
         playerAnim = new Animation();
@@ -220,8 +209,7 @@ public class GameScreen extends Screen
                 {
                     moveX = true;
                     diffX = Math.min(diffX, robot.MOVESPEED * 5);   // clamp
-                }
-                else if (diffX < 0)
+                } else if (diffX < 0)
                 {
                     moveX = true;
                     diffX = Math.max(diffX, -robot.MOVESPEED * 5);  // clamp
@@ -229,11 +217,9 @@ public class GameScreen extends Screen
 
                 if (diffX > 3)
                     robot.setMovingRight(true);
-                else
-                if (diffX < -3)
+                else if (diffX < -3)
                     robot.setMovingLeft(true);
-                else
-                if (Math.abs(diffX) < 1)
+                else if (Math.abs(diffX) < 1)
                 {
                     robot.setMovingRight(false);
                     robot.setMovingLeft(false);
@@ -290,7 +276,7 @@ public class GameScreen extends Screen
         robot.update();
 
         ArrayList projectiles = robot.getProjectiles();
-        for (int i = 0;i < projectiles.size(); i++)
+        for (int i = 0; i < projectiles.size(); i++)
         {
             Projectile p = (Projectile) projectiles.get(i);
             if (p.isVisible() == true)
@@ -308,9 +294,7 @@ public class GameScreen extends Screen
         hb.update();
         hb2.update();
         */
-        bg1.update();
-        bg2.update();
-
+        updateBackgrounds(game.getGraphics());
         animate();
 
         // TODO - game over state
@@ -320,6 +304,47 @@ public class GameScreen extends Screen
             state = GameState.GameOver;
         }
         */
+    }
+
+    //
+    // scroll both backgrounds, if one goes off the screen, load in the next one to take it's place
+    //
+    private void updateBackgrounds(Graphics g)
+    {
+        bg1.update();
+        bg2.update();
+
+        // check if offscreen and time to load next image
+
+        String fileName="";
+        if ( (bg1.getBgY() >= gameHeight) || bg2.getBgY() >= gameHeight)
+        {
+            curBgIdx += 1;
+            if (curBgIdx > Assets.numBackgrounds)
+                curBgIdx = 1;
+            fileName = "Background-" + curBgIdx + ".png";
+        }
+        if (bg1.getBgY() >= gameHeight)
+        {
+            // load new img
+            Assets.bgImg1 = g.newImage(fileName, Graphics.ImageFormat.RGB565);
+            bg1 = new Background(Assets.bgImg1, 0, bg2.getBgY() - Assets.bgImg1.getHeight(), curBgIdx);
+        }
+        else
+        {
+            if (bg2.getBgY() >= gameHeight)
+            {
+                // load new img
+                Assets.bgImg2 = g.newImage(fileName, Graphics.ImageFormat.RGB565);
+                bg2 = new Background(Assets.bgImg2, 0, bg1.getBgY() - Assets.bgImg2.getHeight(), curBgIdx);
+            }
+        }
+    }
+
+    private void drawBackgrounds(Graphics g)
+    {
+        bg1.draw(g);
+        bg2.draw(g);
     }
 
     private boolean inBounds(TouchEvent event, int x, int y, int width, int height)
@@ -381,9 +406,7 @@ public class GameScreen extends Screen
     {
         Graphics g = game.getGraphics();
 
-        g.drawImage(Assets.background, bg1.getBgX(), bg1.getBgY());
-        g.drawImage(Assets.background, bg2.getBgX(), bg2.getBgY());
-
+        drawBackgrounds(g);
         tileMap.draw(g);
 
         ArrayList projectiles = robot.getProjectiles();
@@ -397,11 +420,10 @@ public class GameScreen extends Screen
         playerSprite = playerAnim.getImage();
         if (robot.getMovingLeft())
             playerSprite = playerLeft;
-        else
-        if (robot.getMovingRight())
+        else if (robot.getMovingRight())
             playerSprite = playerRight;
 
-        g.drawImage(playerSprite, robot.getCenterX() - (int)(robot.WIDTH*.5), robot.getCenterY() - (int)(robot.HEIGHT*.5));
+        g.drawImage(playerSprite, robot.getCenterX() - (int) (robot.WIDTH * .5), robot.getCenterY() - (int) (robot.HEIGHT * .5));
 
         /*
         g.drawImage(hanim.getImage(), hb.getCenterX() - 48,
@@ -436,6 +458,7 @@ public class GameScreen extends Screen
         paint = null;
         bg1 = null;
         bg2 = null;
+
         robot = null;
 //        hb = null;
 //        hb2 = null;
@@ -545,16 +568,6 @@ public class GameScreen extends Screen
     private void goToMenu()
     {
         game.setScreen(new MainMenuScreen(game));
-    }
-
-    public static Background getBg1()
-    {
-        return bg1;
-    }
-
-    public static Background getBg2()
-    {
-        return bg2;
     }
 
     public static Robot getRobot()

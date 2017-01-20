@@ -31,9 +31,6 @@ public class Robot
     private int speedY = 0;
     public static Rect bounds = new Rect(0, 0, 0, 0);
 
-    private Background bg1 = GameScreen.getBg1();
-    private Background bg2 = GameScreen.getBg2();
-
     private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
     private long lastCrashTime;
 

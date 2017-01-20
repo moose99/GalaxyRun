@@ -2,32 +2,41 @@ package com.mustafathamer.RobotAndroid;
 
 import android.util.Log;
 
+import com.mustafathamer.framework.Graphics;
+import com.mustafathamer.framework.Image;
+
+
 /**
  * Created by Mus on 11/26/2016.
- * Vertically scrolling background, scrolls downward (positive Y)
+ * Vertically scrolling backgroundImg, scrolls downward (positive Y)
  */
 
 public class Background
 {
-    private int bgX, bgY, speedY;
-    static private int width = 480;
-    static private int height = 2160;
+    public static final int speedY = 2;
+    private int bgX, bgY, idx;
+    private Image img;
 
-    public Background(int x, int y)
+    public Background(Image img, int x, int y, int idx)
     {
+        this.img = img;
         bgX = x;
         bgY = y;
-        speedY = 2;
+        this.idx = idx;
     }
 
     public void update()
     {
-        bgY += speedY;
-
-        if (bgY >= height)
+        if (bgY == 0)
         {
-            bgY  = -height;
+            Log.i("MOOSE", "Background img " + idx + " starting, width=" + img.getWidth() + ", height=" + img.getHeight());
         }
+        bgY += speedY;
+    }
+
+    public void draw(Graphics g)
+    {
+        g.drawImage(img, bgX, bgY);
     }
 
     public int getBgX()
@@ -38,12 +47,9 @@ public class Background
     {
         return bgY;
     }
-    public int getSpeedY()
-    {
-        return speedY;
-    }
-    static public int getHeight() { return height; }
-    static public int getWidth() { return width; }
+    public int getHeight() { return img.getHeight(); }
+    public int getWidth() { return img.getWidth(); }
+    public int getIndex() { return idx; }
 
     public void setBgX(int bgX)
     {
@@ -52,9 +58,5 @@ public class Background
     public void setBgY(int bgY)
     {
         this.bgY = bgY;
-    }
-    public void setSpeedY(int speedY)
-    {
-        this.speedY = speedY;
     }
 }

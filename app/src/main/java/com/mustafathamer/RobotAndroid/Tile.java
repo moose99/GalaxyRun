@@ -1,11 +1,8 @@
 package com.mustafathamer.RobotAndroid;
 
 import android.graphics.Rect;
-
 import com.mustafathamer.framework.Image;
 
-//import static android.R.attr.width;
-//import static android.support.v4.media.session.MediaControllerCompatApi21.TransportControls.play;
 
 /**
  * Created by Mus on 11/26/2016.
@@ -20,60 +17,26 @@ public class Tile
     public Image tileImage;
 
     private Robot robot = GameScreen.getRobot();
-    private Background bg = GameScreen.getBg1();
-    final static public int width = 40;
-    final static public int height = 40;
-    final private int tileMapWidth = 12*width;      // 480 pixels
-    final private int tileMapHeight = 300*height;   // 2400 pixels
+    final static public int width = 32;
+    final static public int height = 32;
+
     private Rect r;
 
     public Tile(int x, int y, int typeInt)
     {
         tileX = x * width;
-        tileY = -tileMapHeight + y * height;
+        tileY = -TileMap.mapHeight + y * height;
 
         type = typeInt;
 
         r = new Rect();
-
-        /*
-        if (type == 5)
-        {
-            tileImage = Assets.tiledirt;
-        } else if (type == 8)
-        {
-            tileImage = Assets.tilegrassTop;
-        } else if (type == 4)
-        {
-            tileImage = Assets.tilegrassLeft;
-        } else if (type == 6)
-        {
-            tileImage = Assets.tilegrassRight;
-
-        } else if (type == 2)
-        {
-            tileImage = Assets.tilegrassBot;
-        } else
-        {
-            type = 0;
-        }
-*/
         switch(type)
         {
-            case 5:
-                tileImage = Assets.tiledirt;
-                break;
-            case 8:
-                tileImage = Assets.tilegrassRight;
+            case 1:
+                tileImage = Assets.tileLeft;
                 break;
             case 2:
-                tileImage = Assets.tilegrassLeft;
-                break;
-            case 4:
-                tileImage = Assets.tilegrassTop;
-                break;
-            case 6:
-                tileImage = Assets.tilegrassBot;
+                tileImage = Assets.tileRight;
                 break;
             default:
                 type = 0;
@@ -83,14 +46,14 @@ public class Tile
 
     public void update()
     {
-        speedY = bg.getSpeedY() * 3;
+        speedY = Background.speedY * 2;
         tileY += speedY;
 
         // vertical wrap
         if (tileY > GameScreen.gameHeight)
-            tileY -= tileMapHeight;
+            tileY -= TileMap.mapHeight;
 
-        r.set(tileX, tileY, tileX + 40, tileY + 40);
+        r.set(tileX, tileY, tileX + width, tileY + height);
 
 
         if (Rect.intersects(r, Robot.bounds) && type != 0)
@@ -128,51 +91,5 @@ public class Tile
     {
         this.tileImage = tileImage;
     }
-
-    /*
-    public void checkVerticalCollision(Rect rtop, Rect rbot)
-    {
-        if (Rect.intersects(rtop, r))
-        {
-
-        }
-
-        if (Rect.intersects(rbot, r) && type == 8)
-        {
-            robot.setSpeedY(0);
-            robot.setCenterY(tileY - 63);
-        }
-    }
-
-    public void checkSideCollision(Rect rleft, Rect rright, Rect leftfoot, Rect rightfoot)
-    {
-        if (type != 5 && type != 2 && type != 0)
-        {
-            if (Rect.intersects(rleft, r))
-            {
-                robot.setCenterX(tileX + 102);
-
-                robot.setSpeedX(0);
-
-            } else if (Rect.intersects(leftfoot, r))
-            {
-
-                robot.setCenterX(tileX + 85);
-                robot.setSpeedX(0);
-            }
-
-            if (Rect.intersects(rright, r))
-            {
-                robot.setCenterX(tileX - 62);
-
-                robot.setSpeedX(0);
-            } else if (Rect.intersects(rightfoot, r))
-            {
-                robot.setCenterX(tileX - 45);
-                robot.setSpeedX(0);
-            }
-        }
-    }
-    */
 
 }

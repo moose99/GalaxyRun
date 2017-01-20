@@ -9,7 +9,7 @@ import android.graphics.Rect;
 public class Enemy
 {
     private int power, centerX, speedX, centerY;
-    private Background bg = GameScreen.getBg1();
+    private Background bg = null;
     private Robot robot = GameScreen.getRobot();
 
     public Rect r = new Rect(0, 0, 0, 0);
@@ -22,7 +22,7 @@ public class Enemy
     {
         follow();
         centerX += speedX;
-        speedX = bg.getSpeedY() * 5 + movementSpeed;
+        speedX = Background.speedY * 5 + movementSpeed;
         r.set(centerX - 25, centerY - 25, centerX + 25, centerY + 35);
 
         if (Rect.intersects(r, Robot.bounds))

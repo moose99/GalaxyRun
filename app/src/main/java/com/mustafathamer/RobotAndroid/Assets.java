@@ -10,14 +10,16 @@ import com.mustafathamer.framework.Image;
  * This Assets class is used to create a static variable for each resource
  * that we will use in the game.
  * We will initialize them in the LoadingScreen.
- * We define all the assets that will be used in our game, and also load & play the background music at 85% volume.
+ * We define all the assets that will be used in our game, and also load & play the backgroundImg music at 85% volume.
  */
 
 public class Assets
 {
+    public static final int numBackgrounds=7;
+    public static Image bgImg1, bgImg2;
 
-    public static Image menu, splash, background, heliboy, heliboy2, heliboy3, heliboy4, heliboy5;
-    public static Image tiledirt, tilegrassTop, tilegrassBot, tilegrassLeft, tilegrassRight, characterJump, characterDown;
+    public static Image menu, splash;
+    public static Image tileLeft, tileRight;
     public static Image player, playerLeft, playerRight, playerDamaged;
     public static Image button;
     public static Sound playerLaser, playerCrash;
