@@ -3,6 +3,8 @@ package com.mustafathamer.RobotAndroid;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.AsyncTask;
+import android.util.Log;
 
 import com.mustafathamer.framework.Game;
 import com.mustafathamer.framework.Graphics;
@@ -40,8 +42,6 @@ public class GameScreen extends Screen
 
     // Variable Setup
 
-    private Background bg1, bg2;
-    private int curBgIdx;
     private static Robot robot;
     //   public static Heliboy hb, hb2;
 
@@ -61,6 +61,7 @@ public class GameScreen extends Screen
     private int prevMoveEventX = 0;
     private int prevMoveEventY = 0;
     private Rect shootButtonBounds = new Rect();
+    private BackgroundMgr bgndMgr;
 
     public GameScreen(Game game)
     {
@@ -71,16 +72,10 @@ public class GameScreen extends Screen
 
         init();
 
+        bgndMgr = new BackgroundMgr();
+        bgndMgr.init();
+
         // Initialize game objects here
-
-        // Create backgrounds
-        // X,Y specifies where upper left of image goes, with 0,0 at upper left of screen
-        int bgY = -(Assets.bgImg2.getHeight() - gameHeight);
-        bg2 = new Background(Assets.bgImg2, 0, bgY, 2);
-
-        bgY -= Assets.bgImg1.getHeight();
-        bg1 = new Background(Assets.bgImg1, 0, bgY, 1);
-        curBgIdx = 2;
 
         robot = new Robot(game);
 
@@ -294,7 +289,7 @@ public class GameScreen extends Screen
         hb.update();
         hb2.update();
         */
-        updateBackgrounds(game.getGraphics());
+        bgndMgr.updateBackgrounds(game.getGraphics());
         animate();
 
         // TODO - game over state
@@ -309,43 +304,6 @@ public class GameScreen extends Screen
     //
     // scroll both backgrounds, if one goes off the screen, load in the next one to take it's place
     //
-    private void updateBackgrounds(Graphics g)
-    {
-        bg1.update();
-        bg2.update();
-
-        // check if offscreen and time to load next image
-
-        String fileName="";
-        if ( (bg1.getBgY() >= gameHeight) || bg2.getBgY() >= gameHeight)
-        {
-            curBgIdx += 1;
-            if (curBgIdx > Assets.numBackgrounds)
-                curBgIdx = 1;
-            fileName = "Background-" + curBgIdx + ".png";
-        }
-        if (bg1.getBgY() >= gameHeight)
-        {
-            // load new img
-            Assets.bgImg1 = g.newImage(fileName, Graphics.ImageFormat.RGB565);
-            bg1 = new Background(Assets.bgImg1, 0, bg2.getBgY() - Assets.bgImg1.getHeight(), curBgIdx);
-        }
-        else
-        {
-            if (bg2.getBgY() >= gameHeight)
-            {
-                // load new img
-                Assets.bgImg2 = g.newImage(fileName, Graphics.ImageFormat.RGB565);
-                bg2 = new Background(Assets.bgImg2, 0, bg1.getBgY() - Assets.bgImg2.getHeight(), curBgIdx);
-            }
-        }
-    }
-
-    private void drawBackgrounds(Graphics g)
-    {
-        bg1.draw(g);
-        bg2.draw(g);
-    }
 
     private boolean inBounds(TouchEvent event, int x, int y, int width, int height)
     {
@@ -406,7 +364,7 @@ public class GameScreen extends Screen
     {
         Graphics g = game.getGraphics();
 
-        drawBackgrounds(g);
+        bgndMgr.drawBackgrounds(g);
         tileMap.draw(g);
 
         ArrayList projectiles = robot.getProjectiles();
@@ -456,8 +414,7 @@ public class GameScreen extends Screen
         // Set all variables to null. You will be recreating them in the
         // constructor.
         paint = null;
-        bg1 = null;
-        bg2 = null;
+        bgndMgr = null;
 
         robot = null;
 //        hb = null;
