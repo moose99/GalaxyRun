@@ -1,3 +1,2 @@
-Load background images in background task (AsyncTask)
-	http://stackoverflow.com/questions/8952592/is-bitmapfactory-decodestream-thread-safe-sometimes-my-async-task-finishes-befo
+Show rocks/aliens
 

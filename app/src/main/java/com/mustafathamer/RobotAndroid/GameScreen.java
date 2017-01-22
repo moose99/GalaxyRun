@@ -50,6 +50,7 @@ public class GameScreen extends Screen
     private Image playerSprite, player, playerLeft, playerRight, playerDamaged;
     // private Image heliboy, heliboy2, heliboy3, heliboy4, heliboy5;
     private Animation playerAnim;
+    private Animation largeRockAnim;
 //    private Animation hanim;
 
     private Sound playerLaser;
@@ -90,6 +91,11 @@ public class GameScreen extends Screen
         playerAnim = new Animation();
         playerAnim.addFrame(player, 1000);
 
+        largeRockAnim = new Animation();
+        for(int i=0;i<Assets.numAsteroidImages; i++)
+        {
+            largeRockAnim.addFrame(Assets.largeRock[i], (int)(1000.0/Assets.numAsteroidImages));
+        }
         /*
         hanim = new Animation();
         hanim.addFrame(heliboy, 100);
@@ -383,6 +389,8 @@ public class GameScreen extends Screen
 
         g.drawImage(playerSprite, robot.getCenterX() - (int) (robot.WIDTH * .5), robot.getCenterY() - (int) (robot.HEIGHT * .5));
 
+        g.drawImage(largeRockAnim.getImage(), robot.getCenterX() - (int) (robot.WIDTH * .5), robot.getCenterY() - 200);
+
         /*
         g.drawImage(hanim.getImage(), hb.getCenterX() - 48,
                 hb.getCenterY() - 48);
@@ -405,6 +413,8 @@ public class GameScreen extends Screen
     public void animate()
     {
         playerAnim.update(10);
+        largeRockAnim.update(15);
+
         //       hanim.update(50);
     }
 
@@ -433,6 +443,7 @@ public class GameScreen extends Screen
         heliboy5 = null;
 */
         playerAnim = null;
+        largeRockAnim = null;
 //        hanim = null;
 
         // Call garbage collector to clean up memory.

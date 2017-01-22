@@ -18,6 +18,9 @@ public class Assets
     public static final int numBackgrounds=7;
     public static Image bgImg1, bgImg2;
 
+    public static int numAsteroidImages=16;
+    public static Image largeRock[], mediumRock[], smallRock[];
+
     public static Image menu, splash;
     public static Image tileLeft, tileRight;
     public static Image player, playerLeft, playerRight, playerDamaged;

@@ -1,5 +1,6 @@
 package com.mustafathamer.RobotAndroid;
 
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.mustafathamer.framework.Game;
@@ -62,6 +63,26 @@ public class LoadingScreen extends Screen
             // TODO load audio format based on hwAudioSampleRate, to allow for fast playback (avoid conversion)
             Assets.playerLaser = game.getAudio().createSound("playerLaser_48khz.wav");
             Assets.playerCrash = game.getAudio().createSound("playerCrash.wav");
+
+            // load asteroid images
+            Assets.largeRock = new Image[Assets.numAsteroidImages];
+            Assets.mediumRock = new Image[Assets.numAsteroidImages];
+            Assets.smallRock = new Image[Assets.numAsteroidImages];
+
+            for(int i=0;i<Assets.numAsteroidImages;i++)
+            {
+                String fileName = "asteroids/large/a" + (int)(10000 + i) + ".png";
+                Assets.largeRock[i] = g.newImage(fileName, ImageFormat.RGB565);
+
+/*
+                fileName = "asteroids/medium/a" + (int)(10000 + i) + ".png";
+
+                Assets.mediumRock[i] = g.newImage(fileName, ImageFormat.RGB565);
+
+                fileName = "asteroids/small/a" + (int)(10000 + i) + ".png";
+                Assets.smallRock[i] = g.newImage(fileName, ImageFormat.RGB565);
+                */
+            }
 
             loaded = true;
         }
