@@ -16,7 +16,7 @@ public class Tile
     public int type;
     public Image tileImage;
 
-    private Robot robot = GameScreen.getRobot();
+    private Player player = GameScreen.getPlayer();
     final static public int width = 32;
     final static public int height = 32;
 
@@ -56,9 +56,9 @@ public class Tile
         r.set(tileX, tileY, tileX + width, tileY + height);
 
 
-        if (Rect.intersects(r, Robot.bounds) && type != 0)
+        if (Rect.intersects(r, Player.bounds) && type != 0)
         {
-            robot.crash();
+            player.crash();
         }
     }
 

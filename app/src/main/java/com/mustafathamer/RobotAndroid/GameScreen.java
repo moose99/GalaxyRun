@@ -3,8 +3,6 @@ package com.mustafathamer.RobotAndroid;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.os.AsyncTask;
-import android.util.Log;
 
 import com.mustafathamer.framework.Game;
 import com.mustafathamer.framework.Graphics;
@@ -22,7 +20,7 @@ import static com.mustafathamer.RobotAndroid.Assets.heliboy2;
 import static com.mustafathamer.RobotAndroid.Assets.heliboy3;
 import static com.mustafathamer.RobotAndroid.Assets.heliboy4;
 import static com.mustafathamer.RobotAndroid.Assets.heliboy5;
-import static com.mustafathamer.RobotAndroid.Robot.rect;
+import static com.mustafathamer.RobotAndroid.playerObj.rect;
 */
 
 /**
@@ -42,7 +40,7 @@ public class GameScreen extends Screen
 
     // Variable Setup
 
-    private static Robot robot;
+    private static Player playerObj;
     //   public static Heliboy hb, hb2;
 
     public static int gameHeight, gameWidth;
@@ -78,7 +76,7 @@ public class GameScreen extends Screen
 
         // Initialize game objects here
 
-        robot = new Robot(game);
+        playerObj = new Player(game);
 
         player = Assets.player;
         playerRight = Assets.playerRight;
@@ -180,9 +178,9 @@ public class GameScreen extends Screen
 
             if (shootButtonEvent && event.type == TouchEvent.TOUCH_DOWN)
             {
-                if (robot.isReadyToFire())
+                if (playerObj.isReadyToFire())
                 {
-                    robot.shoot();
+                    playerObj.shoot();
                     playerLaser.play(1.0f);
                 }
             }
@@ -194,7 +192,7 @@ public class GameScreen extends Screen
 
             if (moveShipEvent && event.type == TouchEvent.TOUCH_UP)
             {
-                robot.stop();
+                playerObj.stop();
             }
 
             // Move ship
@@ -209,32 +207,32 @@ public class GameScreen extends Screen
                 if (diffX > 0)
                 {
                     moveX = true;
-                    diffX = Math.min(diffX, robot.MOVESPEED * 5);   // clamp
+                    diffX = Math.min(diffX, playerObj.MOVESPEED * 5);   // clamp
                 } else if (diffX < 0)
                 {
                     moveX = true;
-                    diffX = Math.max(diffX, -robot.MOVESPEED * 5);  // clamp
+                    diffX = Math.max(diffX, -playerObj.MOVESPEED * 5);  // clamp
                 }
 
                 if (diffX > 3)
-                    robot.setMovingRight(true);
+                    playerObj.setMovingRight(true);
                 else if (diffX < -3)
-                    robot.setMovingLeft(true);
+                    playerObj.setMovingLeft(true);
                 else if (Math.abs(diffX) < 1)
                 {
-                    robot.setMovingRight(false);
-                    robot.setMovingLeft(false);
+                    playerObj.setMovingRight(false);
+                    playerObj.setMovingLeft(false);
                 }
 
                 if (diffY > 0)
                 {
                     moveY = true;
-                    diffY = Math.min(diffY, robot.MOVESPEED * 5);   // clamp
+                    diffY = Math.min(diffY, playerObj.MOVESPEED * 5);   // clamp
                 }
                 if (diffY < 0)
                 {
                     moveY = true;
-                    diffY = Math.max(diffY, -robot.MOVESPEED * 5);   // clamp
+                    diffY = Math.max(diffY, -playerObj.MOVESPEED * 5);   // clamp
                 }
 
 //                Log.i("\tMOOSE", "\tdiffX=" + diffX + ", moveLeft=" + moveLeft + ", moveRight=" + moveRight);
@@ -243,19 +241,19 @@ public class GameScreen extends Screen
                 // MOVE LEFT OR RIGHT
                 if (moveX)
                 {
-                    robot.setSpeedX(diffX);
+                    playerObj.setSpeedX(diffX);
                 }
 
                 // MOVE UP OR DOWN
                 if (moveY)
                 {
-                    robot.setSpeedY(diffY);
+                    playerObj.setSpeedY(diffY);
                 }
                 */
 
-                // set robot above the touch point
-                robot.setCenterX(event.x);
-                robot.setCenterY(event.y - 75);
+                // set player above the touch point
+                playerObj.setCenterX(event.x);
+                playerObj.setCenterY(event.y - 75);
 
                 prevMoveEventX = event.x;
                 prevMoveEventY = event.y;
@@ -274,9 +272,9 @@ public class GameScreen extends Screen
         // This is where all the game updates happen.
 
         // TODO
-        robot.update();
+        playerObj.update();
 
-        ArrayList projectiles = robot.getProjectiles();
+        ArrayList projectiles = playerObj.getProjectiles();
         for (int i = 0; i < projectiles.size(); i++)
         {
             Projectile p = (Projectile) projectiles.get(i);
@@ -300,7 +298,7 @@ public class GameScreen extends Screen
 
         // TODO - game over state
         /*
-        if (robot.getCenterY() > 500)
+        if (playerObj.getCenterY() > 500)
         {
             state = GameState.GameOver;
         }
@@ -373,7 +371,7 @@ public class GameScreen extends Screen
         bgndMgr.drawBackgrounds(g);
         tileMap.draw(g);
 
-        ArrayList projectiles = robot.getProjectiles();
+        ArrayList projectiles = playerObj.getProjectiles();
         for (int i = 0; i < projectiles.size(); i++)
         {
             Projectile p = (Projectile) projectiles.get(i);
@@ -382,14 +380,14 @@ public class GameScreen extends Screen
 
         // First draw the game elements.
         playerSprite = playerAnim.getImage();
-        if (robot.getMovingLeft())
+        if (playerObj.getMovingLeft())
             playerSprite = playerLeft;
-        else if (robot.getMovingRight())
+        else if (playerObj.getMovingRight())
             playerSprite = playerRight;
 
-        g.drawImage(playerSprite, robot.getCenterX() - (int) (robot.WIDTH * .5), robot.getCenterY() - (int) (robot.HEIGHT * .5));
+        g.drawImage(playerSprite, playerObj.getCenterX() - (int) (playerObj.WIDTH * .5), playerObj.getCenterY() - (int) (playerObj.HEIGHT * .5));
 
-        g.drawImage(largeRockAnim.getImage(), robot.getCenterX() - (int) (robot.WIDTH * .5), robot.getCenterY() - 200);
+        g.drawImage(largeRockAnim.getImage(), playerObj.getCenterX() - (int) (playerObj.WIDTH * .5), playerObj.getCenterY() - 200);
 
         /*
         g.drawImage(hanim.getImage(), hb.getCenterX() - 48,
@@ -426,7 +424,7 @@ public class GameScreen extends Screen
         paint = null;
         bgndMgr = null;
 
-        robot = null;
+        player = null;
 //        hb = null;
 //        hb2 = null;
         playerSprite = null;
@@ -538,9 +536,9 @@ public class GameScreen extends Screen
         game.setScreen(new MainMenuScreen(game));
     }
 
-    public static Robot getRobot()
+    public static Player getPlayer()
     {
-        return robot;
+        return playerObj;
     }
 
 }

@@ -10,7 +10,7 @@ public class Enemy
 {
     private int power, centerX, speedX, centerY;
     private Background bg = null;
-    private Robot robot = GameScreen.getRobot();
+    private Player player = GameScreen.getPlayer();
 
     public Rect r = new Rect(0, 0, 0, 0);
     public int health = 5;
@@ -25,7 +25,7 @@ public class Enemy
         speedX = Background.speedY * 5 + movementSpeed;
         r.set(centerX - 25, centerY - 25, centerX + 25, centerY + 35);
 
-        if (Rect.intersects(r, Robot.bounds))
+        if (Rect.intersects(r, Player.bounds))
         {
             checkCollision();
         }
@@ -35,7 +35,7 @@ public class Enemy
 
     private void checkCollision()
     {
-        if (Rect.intersects(r, Robot.bounds))
+        if (Rect.intersects(r, Player.bounds))
         {
 
         }
@@ -47,13 +47,13 @@ public class Enemy
         if (centerX < -95 || centerX > 810)
         {
             movementSpeed = 0;
-        } else if (Math.abs(robot.getCenterX() - centerX) < 5)
+        } else if (Math.abs(player.getCenterX() - centerX) < 5)
         {
             movementSpeed = 0;
         } else
         {
 
-            if (robot.getCenterX() >= centerX)
+            if (player.getCenterX() >= centerX)
             {
                 movementSpeed = 1;
             } else

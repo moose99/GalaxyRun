@@ -15,7 +15,7 @@ import java.io.InputStreamReader;
  * <p>
  * Our game will have just one Activity that will display a
  * SurfaceView (that we create using the AndroidFastRenderView class).
- * This SurfaceView will paint objects (created using classes like Robot or Platform)
+ * This SurfaceView will paint objects (created using classes like Player or Platform)
  * as they update.
  * <p>
  * This will be the main activity of our game. We will set this in the AndroidManifest.

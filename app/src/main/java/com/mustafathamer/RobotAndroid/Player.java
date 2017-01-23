@@ -13,7 +13,7 @@ import static android.R.attr.width;
  * Created by Mus on 11/26/2016.
  */
 
-public class Robot
+public class Player
 {
 
     // Constants are Here
@@ -36,7 +36,7 @@ public class Robot
 
     //
     // position at center near the bottom
-    public Robot(Game game)
+    public Player(Game game)
     {
         this.game = game;
         centerX = game.getGraphics().getWidth() / 2;
