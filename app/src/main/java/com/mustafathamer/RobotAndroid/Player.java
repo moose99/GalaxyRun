@@ -1,9 +1,12 @@
 package com.mustafathamer.RobotAndroid;
 
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.util.Log;
 
 import com.mustafathamer.framework.Game;
+import com.mustafathamer.framework.Graphics;
+import com.mustafathamer.framework.Image;
 
 import java.util.ArrayList;
 
@@ -44,17 +47,50 @@ public class Player extends GameObject
 
     private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
     private long lastCrashTime;
+    private Game game;
 
     //
     // position at center near the bottom
     public Player(Game game)
     {
-        super(game);
+        this.game = game;
         x = game.getGraphics().getWidth() / 2;
         y = (int) (game.getGraphics().getHeight() * 0.8);
         lastCrashTime = 0;
     }
 
+    @Override
+    public void initAssets()
+    {
+        // add images using order of player.ImageType enum
+        imageList.add(Assets.playerLeft);
+        imageList.add(Assets.playerRight);
+        imageList.add(Assets.player);
+        imageList.add(Assets.playerDamaged);
+
+        // add sounds using order of player.SoundType enum
+        soundList.add(Assets.playerLaser);
+
+        // player ship is currently a 1 frame anim (doesn't really need to be an anim)
+        anim.addFrame(Assets.player, 1000);
+    }
+    
+    private void updateProjectiles()
+    {
+        for (int i = 0; i < projectiles.size(); i++)
+        {
+            Projectile p = projectiles.get(i);
+            if (p.isVisible() == true)
+            {
+                p.update();
+            } else
+            {
+                projectiles.remove(i);
+            }
+        }
+    }
+
+    @Override
     public void update()
     {
         // Moves Character
@@ -78,6 +114,29 @@ public class Player extends GameObject
 
         bounds.set(x - (int)(WIDTH*.5), y - (int)(HEIGHT*.5),
                 x + (int)(WIDTH*.5), y + (int)(HEIGHT*.5));
+
+        updateProjectiles();
+
+        anim.update(10);
+    }
+
+    @Override
+    public void draw(Graphics g)
+    {
+        for (int i = 0; i < projectiles.size(); i++)
+        {
+            Projectile p = projectiles.get(i);
+            p.draw(g);
+        }
+
+        // First draw the game elements.
+        Image playerSprite = anim.getImage();
+        if (getMovingLeft())
+            playerSprite = imageList.get(Player.ImageType.Left.ordinal());
+        else if (getMovingRight())
+            playerSprite = imageList.get(Player.ImageType.Right.ordinal());
+
+        g.drawImage(playerSprite, x - (int) (WIDTH * .5), y - (int) (HEIGHT * .5));
     }
 
     public void stop()
@@ -90,9 +149,10 @@ public class Player extends GameObject
     {
         if (readyToFire)
         {
-
             Projectile p = new Projectile(x-2, y - 25);
             projectiles.add(p);
+
+            soundList.get(Player.SoundType.Laser.ordinal()).play(1.0f);
         }
     }
 

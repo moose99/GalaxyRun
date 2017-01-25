@@ -37,52 +37,18 @@ public class LoadingScreen extends Screen
     {
         if (!loaded)
         {
-            Log.i("MOOSE", "LoadingScreen.update: ");
             Graphics g = game.getGraphics();
-            Assets.menu = g.newImage("menu.png", ImageFormat.RGB565);
-
-            // load first 2 backgrounds
-            Assets.bgImg1 = g.newImage("Background-1.png", ImageFormat.RGB565);
-            Assets.bgImg2 = g.newImage("Background-2.png", ImageFormat.RGB565);
-
-            // use ARGB8888 for highest quality, with alpha
-            Assets.player = g.newImage("player.png", ImageFormat.ARGB8888);
-            Assets.playerLeft = g.newImage("playerLeft.png", ImageFormat.ARGB8888);
-            Assets.playerRight = g.newImage("playerRight.png", ImageFormat.ARGB8888);
-            Assets.playerDamaged = g.newImage("playerDamaged.png", ImageFormat.ARGB8888);
-
-
-            Assets.tileLeft = g.newImage("tileLeft2.png", ImageFormat.RGB565);
-            Assets.tileRight = g.newImage("tileRight2.png", ImageFormat.RGB565);
-
-            Assets.button = g.newImage("button.jpg", ImageFormat.RGB565);
 
             int hwAudioSampleRate = game.getAudio().getBestSampleRate();
             Log.i("MOOSE", "hwAudioSampleRate: " + hwAudioSampleRate);
 
-            // TODO load audio format based on hwAudioSampleRate, to allow for fast playback (avoid conversion)
-            Assets.playerLaser = game.getAudio().createSound("playerLaser_48khz.wav");
-            Assets.playerCrash = game.getAudio().createSound("playerCrash.wav");
+            Assets.loadBackground(g);
+            Assets.loadPlayer(g, game);
+            Assets.loadTileMap(g);
+            Assets.loadLargeRocks(g);
 
-            // load asteroid images
-            Assets.largeRock = new Image[Assets.numAsteroidImages];
-            Assets.mediumRock = new Image[Assets.numAsteroidImages];
-            Assets.smallRock = new Image[Assets.numAsteroidImages];
-
-            for(int i=0;i<Assets.numAsteroidImages;i++)
-            {
-                String fileName = "asteroids/large/a" + (int)(10000 + i) + ".png";
-                Assets.largeRock[i] = g.newImage(fileName, ImageFormat.RGB565);
-
-/*
-                fileName = "asteroids/medium/a" + (int)(10000 + i) + ".png";
-
-                Assets.mediumRock[i] = g.newImage(fileName, ImageFormat.RGB565);
-
-                fileName = "asteroids/small/a" + (int)(10000 + i) + ".png";
-                Assets.smallRock[i] = g.newImage(fileName, ImageFormat.RGB565);
-                */
-            }
+            Assets.menu = g.newImage("menu.png", ImageFormat.RGB565);
+            Assets.button = g.newImage("button.jpg", ImageFormat.RGB565);
 
             loaded = true;
         }

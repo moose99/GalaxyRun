@@ -7,14 +7,9 @@ import android.graphics.Rect;
 import com.mustafathamer.framework.Game;
 import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Screen;
-import com.mustafathamer.framework.Image;
 import com.mustafathamer.framework.Input.TouchEvent;
-import com.mustafathamer.framework.Sound;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static com.mustafathamer.RobotAndroid.Assets.player;
 
 /**
  * Created by Mus on 11/25/2016.
@@ -37,8 +32,7 @@ public class GameScreen extends Screen
 
     public static int gameHeight, gameWidth;
 
-    private Image playerSprite;
-    private Animation largeRockAnim;
+    private Asteroid largeRock1;
 
     private TileMap tileMap;
 
@@ -65,24 +59,10 @@ public class GameScreen extends Screen
         // Initialize game objects here
 
         playerObj = new Player(game);
+        playerObj.initAssets();
 
-        // add images using order of player.ImageType enum
-        playerObj.getImageList().add(Assets.playerLeft);
-        playerObj.getImageList().add(Assets.playerRight);
-        playerObj.getImageList().add(player);
-        playerObj.getImageList().add(Assets.playerDamaged);
-
-        // add sounds using order of player.SoundType enum
-        playerObj.getSoundList().add(Assets.playerLaser);
-
-        // player ship is currently a 1 frame anim (doesn't really need to be an anim)
-        playerObj.getAnim().addFrame(Assets.player, 1000);
-
-        largeRockAnim = new Animation();
-        for(int i=0;i<Assets.numAsteroidImages; i++)
-        {
-            largeRockAnim.addFrame(Assets.largeRock[i], (int)(1000.0/Assets.numAsteroidImages));
-        }
+        largeRock1 = new Asteroid(Asteroid.Type.Large1);
+        largeRock1.initAssets();
 
         tileMap = new TileMap();
         tileMap.load();
@@ -156,11 +136,7 @@ public class GameScreen extends Screen
 
             if (shootButtonEvent && event.type == TouchEvent.TOUCH_DOWN)
             {
-                if (playerObj.isReadyToFire())
-                {
-                    playerObj.shoot();
-                    playerObj.getSoundList().get(Player.SoundType.Laser.ordinal()).play(1.0f);
-                }
+                playerObj.shoot();
             }
 
             if (pauseEvent && event.type == TouchEvent.TOUCH_DOWN)
@@ -241,7 +217,6 @@ public class GameScreen extends Screen
 // 2. Check miscellaneous events like death:
 
         if (livesLeft == 0)
-
         {
             state = GameState.GameOver;
         }
@@ -249,30 +224,15 @@ public class GameScreen extends Screen
         // 3. Call individual update() methods here.
         // This is where all the game updates happen.
 
-        // TODO
+        // TODO use delta time
         playerObj.update();
 
-        ArrayList projectiles = playerObj.getProjectiles();
-        for (int i = 0; i < projectiles.size(); i++)
-        {
-            Projectile p = (Projectile) projectiles.get(i);
-            if (p.isVisible() == true)
-            {
-                p.update();
-            } else
-            {
-                projectiles.remove(i);
-            }
-        }
+        largeRock1.setPos(playerObj.getX() - (int) (playerObj.WIDTH * .5), playerObj.getY() - 200);
+        largeRock1.update();
 
         tileMap.update();
 
-        /*
-        hb.update();
-        hb2.update();
-        */
         bgndMgr.updateBackgrounds(game.getGraphics());
-        animate();
 
         // TODO - game over state
         /*
@@ -348,24 +308,8 @@ public class GameScreen extends Screen
 
         bgndMgr.drawBackgrounds(g);
         tileMap.draw(g);
-
-        ArrayList projectiles = playerObj.getProjectiles();
-        for (int i = 0; i < projectiles.size(); i++)
-        {
-            Projectile p = (Projectile) projectiles.get(i);
-            g.drawRect(p.getX(), p.getY(), 4, 4, Color.YELLOW);
-        }
-
-        // First draw the game elements.
-        playerSprite = playerObj.getAnim().getImage();
-        if (playerObj.getMovingLeft())
-            playerSprite = playerObj.getImageList().get(Player.ImageType.Left.ordinal());
-        else if (playerObj.getMovingRight())
-            playerSprite = playerObj.getImageList().get(Player.ImageType.Right.ordinal());
-
-        g.drawImage(playerSprite, playerObj.getX() - (int) (playerObj.WIDTH * .5), playerObj.getY() - (int) (playerObj.HEIGHT * .5));
-
-        g.drawImage(largeRockAnim.getImage(), playerObj.getX() - (int) (playerObj.WIDTH * .5), playerObj.getY() - 200);
+        playerObj.draw(g);
+        largeRock1.draw(g);
 
         // Secondly, draw the UI above the game elements.
         if (state == GameState.Ready)
@@ -379,30 +323,13 @@ public class GameScreen extends Screen
 
     }
 
-    // TODO pass elapsed time into animate()
-    public void animate()
-    {
-        playerObj.getAnim().update(10);
-        largeRockAnim.update(15);
-    }
-
+    // TODO fix this init
     private void init()
     {
-
         // Set all variables to null. You will be recreating them in the
         // constructor.
         paint = null;
         bgndMgr = null;
-
-//        player = null;
-        playerSprite = null;
-//        player = null;
-//        playerLeft = null;
-//        playerRight = null;
-//        playerDamaged = null;
-
-//        playerAnim = null;
-        largeRockAnim = null;
 
         // Call garbage collector to clean up memory.
         System.gc();

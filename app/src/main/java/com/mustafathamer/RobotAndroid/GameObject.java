@@ -3,6 +3,7 @@ package com.mustafathamer.RobotAndroid;
 import android.graphics.Rect;
 
 import com.mustafathamer.framework.Game;
+import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Image;
 import com.mustafathamer.framework.Sound;
 
@@ -22,14 +23,24 @@ public class GameObject
     protected Animation anim = new Animation();
     protected int x = 0, y = 0;                 // center
     protected int speedX = 0, speedY = 0;       // velocity
-    protected Game game;
-
-    public GameObject(Game game)
-    {
-        this.game = game;
-    }
+    protected boolean visible = false;
 
     public GameObject()
+    {
+
+    }
+
+    public void initAssets()
+    {
+
+    }
+
+    public void draw(Graphics g)
+    {
+
+    }
+
+    public void update()
     {
 
     }
@@ -42,16 +53,6 @@ public class GameObject
     public void setImageList(ArrayList<Image> images)
     {
         this.imageList = images;
-    }
-
-    public Game getGame()
-    {
-        return game;
-    }
-
-    public void setGame(Game game)
-    {
-        this.game = game;
     }
 
     public Rect getBounds()
@@ -94,6 +95,8 @@ public class GameObject
         this.y = y;
     }
 
+    public void setPos(int x, int y) { this.x = x; this.y = y; }
+
     public int getSpeedX()
     {
         return speedX;
@@ -124,5 +127,14 @@ public class GameObject
         this.soundList = soundList;
     }
 
+    public boolean isVisible()
+    {
+        return visible;
+    }
+
+    public void setVisible(boolean visible)
+    {
+        this.visible = visible;
+    }
 
 }
