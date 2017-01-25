@@ -56,7 +56,7 @@ public class Tile
         r.set(tileX, tileY, tileX + width, tileY + height);
 
 
-        if (Rect.intersects(r, Player.bounds) && type != 0)
+        if (Rect.intersects(r, player.getBounds()) && type != 0)
         {
             player.crash();
         }

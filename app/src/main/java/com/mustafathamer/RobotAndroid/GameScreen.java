@@ -14,14 +14,7 @@ import com.mustafathamer.framework.Sound;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-import static com.mustafathamer.RobotAndroid.Assets.heliboy;
-import static com.mustafathamer.RobotAndroid.Assets.heliboy2;
-import static com.mustafathamer.RobotAndroid.Assets.heliboy3;
-import static com.mustafathamer.RobotAndroid.Assets.heliboy4;
-import static com.mustafathamer.RobotAndroid.Assets.heliboy5;
-import static com.mustafathamer.RobotAndroid.playerObj.rect;
-*/
+import static com.mustafathamer.RobotAndroid.Assets.player;
 
 /**
  * Created by Mus on 11/25/2016.
@@ -41,17 +34,12 @@ public class GameScreen extends Screen
     // Variable Setup
 
     private static Player playerObj;
-    //   public static Heliboy hb, hb2;
 
     public static int gameHeight, gameWidth;
 
-    private Image playerSprite, player, playerLeft, playerRight, playerDamaged;
-    // private Image heliboy, heliboy2, heliboy3, heliboy4, heliboy5;
-    private Animation playerAnim;
+    private Image playerSprite;
     private Animation largeRockAnim;
-//    private Animation hanim;
 
-    private Sound playerLaser;
     private TileMap tileMap;
 
     private int livesLeft = 1;
@@ -78,33 +66,23 @@ public class GameScreen extends Screen
 
         playerObj = new Player(game);
 
-        player = Assets.player;
-        playerRight = Assets.playerRight;
-        playerLeft = Assets.playerLeft;
-        playerDamaged = Assets.playerDamaged;
+        // add images using order of player.ImageType enum
+        playerObj.getImageList().add(Assets.playerLeft);
+        playerObj.getImageList().add(Assets.playerRight);
+        playerObj.getImageList().add(player);
+        playerObj.getImageList().add(Assets.playerDamaged);
 
-        playerLaser = Assets.playerLaser;
+        // add sounds using order of player.SoundType enum
+        playerObj.getSoundList().add(Assets.playerLaser);
 
         // player ship is currently a 1 frame anim (doesn't really need to be an anim)
-        playerAnim = new Animation();
-        playerAnim.addFrame(player, 1000);
+        playerObj.getAnim().addFrame(Assets.player, 1000);
 
         largeRockAnim = new Animation();
         for(int i=0;i<Assets.numAsteroidImages; i++)
         {
             largeRockAnim.addFrame(Assets.largeRock[i], (int)(1000.0/Assets.numAsteroidImages));
         }
-        /*
-        hanim = new Animation();
-        hanim.addFrame(heliboy, 100);
-        hanim.addFrame(heliboy2, 100);
-        hanim.addFrame(heliboy3, 100);
-        hanim.addFrame(heliboy4, 100);
-        hanim.addFrame(heliboy5, 100);
-        hanim.addFrame(heliboy4, 100);
-        hanim.addFrame(heliboy3, 100);
-        hanim.addFrame(heliboy2, 100);
-*/
 
         tileMap = new TileMap();
         tileMap.load();
@@ -181,7 +159,7 @@ public class GameScreen extends Screen
                 if (playerObj.isReadyToFire())
                 {
                     playerObj.shoot();
-                    playerLaser.play(1.0f);
+                    playerObj.getSoundList().get(Player.SoundType.Laser.ordinal()).play(1.0f);
                 }
             }
 
@@ -252,8 +230,8 @@ public class GameScreen extends Screen
                 */
 
                 // set player above the touch point
-                playerObj.setCenterX(event.x);
-                playerObj.setCenterY(event.y - 75);
+                playerObj.setX(event.x);
+                playerObj.setY(event.y - 75);
 
                 prevMoveEventX = event.x;
                 prevMoveEventY = event.y;
@@ -298,7 +276,7 @@ public class GameScreen extends Screen
 
         // TODO - game over state
         /*
-        if (playerObj.getCenterY() > 500)
+        if (playerObj.getY() > 500)
         {
             state = GameState.GameOver;
         }
@@ -379,22 +357,16 @@ public class GameScreen extends Screen
         }
 
         // First draw the game elements.
-        playerSprite = playerAnim.getImage();
+        playerSprite = playerObj.getAnim().getImage();
         if (playerObj.getMovingLeft())
-            playerSprite = playerLeft;
+            playerSprite = playerObj.getImageList().get(Player.ImageType.Left.ordinal());
         else if (playerObj.getMovingRight())
-            playerSprite = playerRight;
+            playerSprite = playerObj.getImageList().get(Player.ImageType.Right.ordinal());
 
-        g.drawImage(playerSprite, playerObj.getCenterX() - (int) (playerObj.WIDTH * .5), playerObj.getCenterY() - (int) (playerObj.HEIGHT * .5));
+        g.drawImage(playerSprite, playerObj.getX() - (int) (playerObj.WIDTH * .5), playerObj.getY() - (int) (playerObj.HEIGHT * .5));
 
-        g.drawImage(largeRockAnim.getImage(), playerObj.getCenterX() - (int) (playerObj.WIDTH * .5), playerObj.getCenterY() - 200);
+        g.drawImage(largeRockAnim.getImage(), playerObj.getX() - (int) (playerObj.WIDTH * .5), playerObj.getY() - 200);
 
-        /*
-        g.drawImage(hanim.getImage(), hb.getCenterX() - 48,
-                hb.getCenterY() - 48);
-        g.drawImage(hanim.getImage(), hb2.getCenterX() - 48,
-                hb2.getCenterY() - 48);
-*/
         // Secondly, draw the UI above the game elements.
         if (state == GameState.Ready)
             drawReadyUI();
@@ -410,10 +382,8 @@ public class GameScreen extends Screen
     // TODO pass elapsed time into animate()
     public void animate()
     {
-        playerAnim.update(10);
+        playerObj.getAnim().update(10);
         largeRockAnim.update(15);
-
-        //       hanim.update(50);
     }
 
     private void init()
@@ -424,25 +394,15 @@ public class GameScreen extends Screen
         paint = null;
         bgndMgr = null;
 
-        player = null;
-//        hb = null;
-//        hb2 = null;
+//        player = null;
         playerSprite = null;
-        player = null;
-        playerLeft = null;
-        playerRight = null;
-        playerDamaged = null;
- /*
-        heliboy = null;
+//        player = null;
+//        playerLeft = null;
+//        playerRight = null;
+//        playerDamaged = null;
 
-        heliboy2 = null;
-        heliboy3 = null;
-        heliboy4 = null;
-        heliboy5 = null;
-*/
-        playerAnim = null;
+//        playerAnim = null;
         largeRockAnim = null;
-//        hanim = null;
 
         // Call garbage collector to clean up memory.
         System.gc();
