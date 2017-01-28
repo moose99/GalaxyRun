@@ -37,7 +37,7 @@ public class TileMap
     }
 
     // move all tiles
-    public void update()
+    public void update(float deltaTime)
     {
         for (int i = 0; i < tilearray.size(); i++)
         {

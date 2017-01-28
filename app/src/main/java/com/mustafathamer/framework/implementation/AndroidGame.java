@@ -34,7 +34,6 @@ public abstract class AndroidGame extends Activity implements Game
     Audio audio;
     Input input;
     FileIO fileIO;
-
     Screen screen;
     WakeLock wakeLock;
 

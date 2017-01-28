@@ -32,7 +32,7 @@ public class BackgroundMgr
         loadingBackground = false;
     }
 
-    public void updateBackgrounds(Graphics g)
+    public void update(Graphics g, float deltaTime)
     {
         bg1.update();
         bg2.update();

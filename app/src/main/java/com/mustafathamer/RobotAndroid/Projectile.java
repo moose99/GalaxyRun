@@ -2,6 +2,7 @@ package com.mustafathamer.RobotAndroid;
 
 import android.graphics.Color;
 
+import com.mustafathamer.framework.Game;
 import com.mustafathamer.framework.Graphics;
 
 /**
@@ -22,7 +23,7 @@ public class Projectile extends GameObject
     }
 
     @Override
-    public void update()
+    public void update(float deltaTime)
     {
         y -= speedY;
         bounds.set(x, y, x + WIDTH, y + HEIGHT);

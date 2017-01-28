@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 public class GameObject
 {
-    protected ArrayList<Image> imageList = new ArrayList<Image>();
     protected ArrayList<Sound> soundList = new ArrayList<Sound>();
 
     protected Rect bounds = new Rect();
@@ -24,6 +23,18 @@ public class GameObject
     protected int x = 0, y = 0;                 // center
     protected int speedX = 0, speedY = 0;       // velocity
     protected boolean visible = false;
+
+    public boolean isDead()
+    {
+        return dead;
+    }
+
+    public void setDead(boolean dead)
+    {
+        this.dead = dead;
+    }
+
+    protected boolean dead = false;                     // set dead when it should be removed the game
 
     public GameObject()
     {
@@ -40,19 +51,9 @@ public class GameObject
 
     }
 
-    public void update()
+    public void update(float deltaTime)
     {
 
-    }
-
-    public ArrayList<Image> getImageList()
-    {
-        return imageList;
-    }
-
-    public void setImageList(ArrayList<Image> images)
-    {
-        this.imageList = images;
     }
 
     public Rect getBounds()

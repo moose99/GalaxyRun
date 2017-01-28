@@ -20,6 +20,7 @@ import static android.R.attr.width;
 
 public class Player extends GameObject
 {
+    protected ArrayList<Image> imageList = new ArrayList<Image>();
 
     // Constants are Here
     public final int MOVESPEED = 5;
@@ -47,15 +48,13 @@ public class Player extends GameObject
 
     private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
     private long lastCrashTime;
-    private Game game;
 
     //
     // position at center near the bottom
     public Player(Game game)
     {
-        this.game = game;
-        x = game.getGraphics().getWidth() / 2;
-        y = (int) (game.getGraphics().getHeight() * 0.8);
+        x = GameScreen.gameWidth / 2;
+        y = (int) (GameScreen.gameHeight * 0.8);
         lastCrashTime = 0;
     }
 
@@ -75,14 +74,14 @@ public class Player extends GameObject
         anim.addFrame(Assets.player, 1000);
     }
     
-    private void updateProjectiles()
+    private void updateProjectiles(float deltaTime)
     {
         for (int i = 0; i < projectiles.size(); i++)
         {
             Projectile p = projectiles.get(i);
             if (p.isVisible() == true)
             {
-                p.update();
+                p.update(deltaTime);
             } else
             {
                 projectiles.remove(i);
@@ -91,7 +90,7 @@ public class Player extends GameObject
     }
 
     @Override
-    public void update()
+    public void update(float deltaTime)
     {
         // Moves Character
 
@@ -99,15 +98,15 @@ public class Player extends GameObject
         y += speedY;
 
         // CLAMP to screen edge
-        if (x > game.getGraphics().getWidth())
-            x = game.getGraphics().getWidth();
+        if (x > GameScreen.gameWidth)
+            x = GameScreen.gameWidth;
         if (x < 0)
             x = 0;
 
-        if (y > (int)(game.getGraphics().getHeight() *.9) )
-            y = (int)(game.getGraphics().getHeight() * .9);
-        if (y < (int)(game.getGraphics().getHeight() *.5) )
-            y = (int)(game.getGraphics().getHeight() * .5);
+        if (y > (int)(GameScreen.gameHeight *.9) )
+            y = (int)(GameScreen.gameHeight * .9);
+        if (y < (int)(GameScreen.gameHeight *.5) )
+            y = (int)(GameScreen.gameHeight * .5);
 
 //        Log.i("MOOSE", "ctrX=" + x+ ", ctrY=" + y +
 //                ", speedX=" + speedX + ", speedY=" + speedY);
@@ -115,9 +114,9 @@ public class Player extends GameObject
         bounds.set(x - (int)(WIDTH*.5), y - (int)(HEIGHT*.5),
                 x + (int)(WIDTH*.5), y + (int)(HEIGHT*.5));
 
-        updateProjectiles();
+        updateProjectiles(deltaTime);
 
-        anim.update(10);
+        anim.update((int)(deltaTime * 1000));
     }
 
     @Override

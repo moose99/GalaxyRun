@@ -3,13 +3,19 @@ package com.mustafathamer.RobotAndroid;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.mustafathamer.framework.Game;
 import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Screen;
 import com.mustafathamer.framework.Input.TouchEvent;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
+import static com.mustafathamer.RobotAndroid.GameScreen.GameState.Ready;
+import static com.mustafathamer.RobotAndroid.GameScreen.GameState.Running;
 
 /**
  * Created by Mus on 11/25/2016.
@@ -24,45 +30,49 @@ public class GameScreen extends Screen
         Ready, Running, Paused, GameOver
     }
 
-    GameState state = GameState.Ready;
+    GameState state = Ready;
 
     // Variable Setup
 
     private static Player playerObj;
-
     public static int gameHeight, gameWidth;
 
-    private Asteroid largeRock1;
-
+    private ArrayList<GameObject> gameObjects;
     private TileMap tileMap;
-
     private int livesLeft = 1;
     private Paint paint, paint2;
-
     private int prevMoveEventX = 0;
     private int prevMoveEventY = 0;
-    private Rect shootButtonBounds = new Rect();
+    private Rect shootButtonBounds;
     private BackgroundMgr bgndMgr;
+    private Random rand;
 
     public GameScreen(Game game)
     {
         super(game);
+        init();
+    }
 
+    public void init()
+    {
         gameWidth = game.getGraphics().getWidth();
         gameHeight = game.getGraphics().getHeight();
+        Log.i("MOOSE", "init: gameWidth = " + gameWidth + ", gameHeight = " + gameHeight);
 
-        init();
+        rand = new Random();
+        gameObjects = new ArrayList<>();
+
+        shootButtonBounds = new Rect();
+        getShootButtonBounds(shootButtonBounds);
 
         bgndMgr = new BackgroundMgr();
         bgndMgr.init();
 
         // Initialize game objects here
+        // Make sure to set objects to null in uninit
 
         playerObj = new Player(game);
         playerObj.initAssets();
-
-        largeRock1 = new Asteroid(Asteroid.Type.Large1);
-        largeRock1.initAssets();
 
         tileMap = new TileMap();
         tileMap.load();
@@ -88,17 +98,25 @@ public class GameScreen extends Screen
 
         // We have four separate update methods in this example.
         // Depending on the state of the game, we call different update methods.
-        // Refer to Unit 3's code. We did a similar thing without separating the
-        // update methods.
 
-        if (state == GameState.Ready)
-            updateReady(touchEvents);
-        if (state == GameState.Running)
-            updateRunning(touchEvents, deltaTime);
-        if (state == GameState.Paused)
-            updatePaused(touchEvents);
-        if (state == GameState.GameOver)
-            updateGameOver(touchEvents);
+        switch (state)
+        {
+            case Ready:
+                updateReady(touchEvents);
+                break;
+
+            case Running:
+                updateRunning(touchEvents, deltaTime);
+                break;
+
+            case Paused:
+                updatePaused(touchEvents);
+                break;
+
+            case GameOver:
+                updateGameOver(touchEvents);
+                break;
+        }
     }
 
     //
@@ -112,7 +130,7 @@ public class GameScreen extends Screen
         // Now the updateRunning() method will be called!
 
         if (touchEvents.size() > 0)
-            state = GameState.Running;
+            state = Running;
     }
 
     //
@@ -225,14 +243,12 @@ public class GameScreen extends Screen
         // This is where all the game updates happen.
 
         // TODO use delta time
-        playerObj.update();
+        playerObj.update(deltaTime);
+        updateGameObjects(deltaTime);
+        tileMap.update(deltaTime);
+        bgndMgr.update(game.getGraphics(), deltaTime);
 
-        largeRock1.setPos(playerObj.getX() - (int) (playerObj.WIDTH * .5), playerObj.getY() - 200);
-        largeRock1.update();
-
-        tileMap.update();
-
-        bgndMgr.updateBackgrounds(game.getGraphics());
+        addNewGameObjects();
 
         // TODO - game over state
         /*
@@ -275,7 +291,7 @@ public class GameScreen extends Screen
 
                 if (inBounds(event, 0, 240, 800, 240))
                 {
-                    init();
+                    unInit();
                     goToMenu();
                 }
             }
@@ -292,7 +308,7 @@ public class GameScreen extends Screen
             {
                 if (inBounds(event, 0, 0, 800, 480))
                 {
-                    init();
+                    unInit();
                     game.setScreen(new MainMenuScreen(game));
                     return;
                 }
@@ -301,40 +317,129 @@ public class GameScreen extends Screen
 
     }
 
+    //
+    // add rocks, aliens, etc into the game
+    //
+    private void addNewGameObjects()
+    {
+        int r = rand.nextInt(1000) + 1;      // from 1 to 100
+        GameObject rock = null;
+        switch (r)
+        {
+            case 1:
+                rock = new Asteroid(Asteroid.Type.Large1);
+                Log.i("MOOSE", "addNewGameObjects: Rock Large1");
+                break;
+            case 2:
+                rock = new Asteroid(Asteroid.Type.Large2);
+                Log.i("MOOSE", "addNewGameObjects: Rock Large2");
+                break;
+            case 3:
+                rock = new Asteroid(Asteroid.Type.Medium1);
+                Log.i("MOOSE", "addNewGameObjects: Rock Medium1");
+                break;
+            case 4:
+                rock = new Asteroid(Asteroid.Type.Medium2);
+                Log.i("MOOSE", "addNewGameObjects: Rock Medium2");
+                break;
+            case 5:
+                rock = new Asteroid(Asteroid.Type.Small1);
+                Log.i("MOOSE", "addNewGameObjects: Rock Small1");
+                break;
+            case 6:
+                rock = new Asteroid(Asteroid.Type.Small2);
+                Log.i("MOOSE", "addNewGameObjects: Rock Small2");
+                break;
+        }
+
+        if (rock != null)
+        {
+            rock.initAssets();
+            int x = rand.nextInt(gameWidth - 100) + 50;
+            int y = rand.nextInt(200);
+            rock.setPos(x, y);
+            AddGameObject(rock);
+        }
+    }
+
+    //
+    // update all game objects
+    //
+    public void updateGameObjects(float deltaTime)
+    {
+        // update all objects
+        for (int i = 0; i < gameObjects.size(); i++)
+        {
+            gameObjects.get(i).update(deltaTime);
+        }
+
+        // remove any dead objects
+        for (int i = 0; i < gameObjects.size(); )
+        {
+            if (gameObjects.get(i).isDead())
+                gameObjects.remove(i);
+            else
+                i++;
+        }
+    }
+
+    //
+    // draw all game objects
+    //
+    public void drawGameObjects(Graphics g)
+    {
+        for (int i = 0; i < gameObjects.size(); i++)
+        {
+            gameObjects.get(i).draw(g);
+        }
+    }
+
     @Override
     public void paint(float deltaTime)
     {
         Graphics g = game.getGraphics();
 
-        bgndMgr.drawBackgrounds(g);
-        tileMap.draw(g);
-        playerObj.draw(g);
-        largeRock1.draw(g);
+        switch (state)
+        {
+            case Ready:
+                drawReadyUI();
+                break;
 
-        // Secondly, draw the UI above the game elements.
-        if (state == GameState.Ready)
-            drawReadyUI();
-        if (state == GameState.Running)
-            drawRunningUI();
-        if (state == GameState.Paused)
-            drawPausedUI();
-        if (state == GameState.GameOver)
-            drawGameOverUI();
+            case Running:
+                bgndMgr.drawBackgrounds(g);
+                tileMap.draw(g);
+                playerObj.draw(g);
 
+                drawGameObjects(g);
+                drawRunningUI();
+                break;
+
+            case Paused:
+                drawPausedUI();
+                break;
+
+            case GameOver:
+                drawGameOverUI();
+                break;
+        }
     }
 
-    // TODO fix this init
-    private void init()
+    //
+    // Set objects to null.  Called when exiting game
+    //
+    private void unInit()
     {
-        // Set all variables to null. You will be recreating them in the
-        // constructor.
+        rand = null;
         paint = null;
+        paint2 = null;
         bgndMgr = null;
+        gameObjects = null;
+        shootButtonBounds = null;
+        playerObj = null;
+        tileMap = null;
 
         // Call garbage collector to clean up memory.
         System.gc();
-
-        getShootButtonBounds(shootButtonBounds);
     }
 
     private void getShootButtonBounds(Rect r)
@@ -394,7 +499,7 @@ public class GameScreen extends Screen
     @Override
     public void pause()
     {
-        if (state == GameState.Running)
+        if (state == Running)
             state = GameState.Paused;
 
     }
@@ -403,7 +508,7 @@ public class GameScreen extends Screen
     public void resume()
     {
         if (state == GameState.Paused)
-            state = GameState.Running;
+            state = Running;
     }
 
     @Override
@@ -428,4 +533,13 @@ public class GameScreen extends Screen
         return playerObj;
     }
 
+    public void AddGameObject(GameObject gameObject)
+    {
+        gameObjects.add(gameObject);
+    }
+
+    public void RemoveGameObject(GameObject gameObject)
+    {
+        gameObjects.remove(gameObject);
+    }
 }

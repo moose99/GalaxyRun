@@ -1,2 +1,8 @@
-Show rocks/aliens
+-add aliens
+-add score
+
+ROCKS
+-add horizontal motion to rocks, bounce off walls
+-add sounds to rocks
+-add collision/explosions
 

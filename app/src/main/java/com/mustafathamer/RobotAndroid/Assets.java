@@ -21,7 +21,9 @@ public class Assets
     public static Image bgImg1, bgImg2;
 
     public static int numAsteroidImages=16;
-    public static Image largeRock1[];    //, mediumRock[], smallRock[];
+    public static Image largeRock1[], largeRock2[];
+    public static Image mediumRock1[], mediumRock2[];
+    public static Image smallRock1[], smallRock2[];
 
     public static Image menu, splash;
     public static Image tileLeft, tileRight;
@@ -42,13 +44,61 @@ public class Assets
 
     public static boolean loadLargeRocks(Graphics g)
     {
-        // load large rock 1 - 7
+        // load large rock 1 - 2
         Assets.largeRock1 = new Image[Assets.numAsteroidImages];
         for (int i = 0; i < Assets.numAsteroidImages; i++)
         {
             String fileName = "asteroids/large/a" + (int) (10000 + i) + ".png";
             Assets.largeRock1[i] = g.newImage(fileName, Graphics.ImageFormat.RGB565);
         }
+
+        Assets.largeRock2 = new Image[Assets.numAsteroidImages];
+        for (int i = 0; i < Assets.numAsteroidImages; i++)
+        {
+            String fileName = "asteroids/large/b" + (int) (30000 + i) + ".png";
+            Assets.largeRock2[i] = g.newImage(fileName, Graphics.ImageFormat.RGB565);
+        }
+
+        return true;
+    }
+
+    public static boolean loadMediumRocks(Graphics g)
+    {
+        // load large rock 1 - 2
+        Assets.mediumRock1 = new Image[Assets.numAsteroidImages];
+        for (int i = 0; i < Assets.numAsteroidImages; i++)
+        {
+            String fileName = "asteroids/medium/a" + (int) (10000 + i) + ".png";
+            Assets.mediumRock1[i] = g.newImage(fileName, Graphics.ImageFormat.RGB565);
+        }
+
+        Assets.mediumRock2 = new Image[Assets.numAsteroidImages];
+        for (int i = 0; i < Assets.numAsteroidImages; i++)
+        {
+            String fileName = "asteroids/medium/d" + (int) (30000 + i) + ".png";
+            Assets.mediumRock2[i] = g.newImage(fileName, Graphics.ImageFormat.RGB565);
+        }
+
+        return true;
+    }
+
+    public static boolean loadSmallRocks(Graphics g)
+    {
+        // load large rock 1 - 2
+        Assets.smallRock1 = new Image[Assets.numAsteroidImages];
+        for (int i = 0; i < Assets.numAsteroidImages; i++)
+        {
+            String fileName = "asteroids/small/a" + (int) (10000 + i) + ".png";
+            Assets.smallRock1[i] = g.newImage(fileName, Graphics.ImageFormat.RGB565);
+        }
+
+        Assets.smallRock2 = new Image[Assets.numAsteroidImages];
+        for (int i = 0; i < Assets.numAsteroidImages; i++)
+        {
+            String fileName = "asteroids/small/a" + (int) (30000 + i) + ".png";
+            Assets.smallRock2[i] = g.newImage(fileName, Graphics.ImageFormat.RGB565);
+        }
+
         return true;
     }
 

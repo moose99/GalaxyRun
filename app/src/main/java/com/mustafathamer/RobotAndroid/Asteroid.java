@@ -3,6 +3,8 @@ package com.mustafathamer.RobotAndroid;
 import com.mustafathamer.framework.Game;
 import com.mustafathamer.framework.Graphics;
 
+import static com.mustafathamer.RobotAndroid.Asteroid.Type.Large2;
+
 /**
  * Created by Mus on 1/24/2017.
  */
@@ -13,12 +15,12 @@ public class Asteroid extends GameObject
     {
         Large1,
         Large2,
-        Large3,
-        Large4,
-        Large5,
-        Large6,
-        Large7
+        Medium1,
+        Medium2,
+        Small1,
+        Small2
     }
+
     private Type type;
 
     public Asteroid(Type t)
@@ -29,14 +31,29 @@ public class Asteroid extends GameObject
     @Override
     public void initAssets()
     {
-        switch(type)
+        for (int i = 0; i < Assets.numAsteroidImages; i++)
         {
-            case Large1:
-                for (int i = 0; i < Assets.numAsteroidImages; i++)
-                {
+            switch (type)
+            {
+                case Large1:
                     anim.addFrame(Assets.largeRock1[i], (int) (1000.0 / Assets.numAsteroidImages));
-                }
-                break;
+                    break;
+                case Large2:
+                    anim.addFrame(Assets.largeRock2[i], (int) (1000.0 / Assets.numAsteroidImages));
+                    break;
+                case Medium1:
+                    anim.addFrame(Assets.mediumRock1[i], (int) (1000.0 / Assets.numAsteroidImages));
+                    break;
+                case Medium2:
+                    anim.addFrame(Assets.mediumRock2[i], (int) (1000.0 / Assets.numAsteroidImages));
+                    break;
+                case Small1:
+                    anim.addFrame(Assets.smallRock1[i], (int) (1000.0 / Assets.numAsteroidImages));
+                    break;
+                case Small2:
+                    anim.addFrame(Assets.smallRock2[i], (int) (1000.0 / Assets.numAsteroidImages));
+                    break;
+            }
         }
     }
 
@@ -47,8 +64,16 @@ public class Asteroid extends GameObject
     }
 
     @Override
-    public void update()
+    public void update(float deltaTime)
     {
         anim.update(15);
+
+        speedY = Background.speedY * 2;
+        y += speedY;
+
+        if (y>GameScreen.gameHeight)
+        {
+            setDead(true);
+        }
     }
 }

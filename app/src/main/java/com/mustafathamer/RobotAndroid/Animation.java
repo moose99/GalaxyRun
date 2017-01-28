@@ -9,7 +9,6 @@ import com.mustafathamer.framework.Image;
 
 public class Animation
 {
-
     private ArrayList frames;
     private int currentFrame;
     private long animTime;
@@ -71,7 +70,6 @@ public class Animation
 
     private class AnimFrame
     {
-
         Image image;
         long endTime;
 
