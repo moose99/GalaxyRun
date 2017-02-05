@@ -21,6 +21,7 @@ public interface Graphics
     void drawLine(int x, int y, int x2, int y2, int color);
 
     void drawRect(int x, int y, int width, int height, int color);
+    void strokeRect(int x, int y, int width, int height, int color);
 
     void drawImage(Image image, int x, int y, int srcX, int srcY,
                    int srcWidth, int srcHeight);

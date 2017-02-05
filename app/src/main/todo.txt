@@ -1,8 +1,11 @@
+-change app name
+-change menus
 -add aliens
--add score
+-add powerups
+-add overheat bar
 
 ROCKS
 -add horizontal motion to rocks, bounce off walls
 -add sounds to rocks
--add collision/explosions
+-add explosions
 

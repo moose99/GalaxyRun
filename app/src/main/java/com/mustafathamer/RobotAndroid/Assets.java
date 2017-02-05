@@ -29,7 +29,7 @@ public class Assets
     public static Image tileLeft, tileRight;
     public static Image player, playerLeft, playerRight, playerDamaged;
     public static Image button;
-    public static Sound playerLaser, playerCrash;
+    public static Sound playerLaser, playerCrash, explosion;
     public static Music theme;
 
     // TODO - this should probably load all the assets, only. Play the music in the loading or menu screen
@@ -134,4 +134,9 @@ public class Assets
         return true;
     }
 
+    public static boolean loadProjectiles(Graphics g, Game game)
+    {
+        Assets.explosion = game.getAudio().createSound("explode.wav");
+        return true;
+    }
 }

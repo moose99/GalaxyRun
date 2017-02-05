@@ -26,6 +26,7 @@ public class Player extends GameObject
     public final int MOVESPEED = 5;
     public final int WIDTH = 99;   // from image
     public final int HEIGHT = 75;  // from image
+    private final int TIME_BETWEEN_SHOTS = 200;     // in millis, 5 shots per sec
 
     // lmage identifiers
     public enum ImageType
@@ -36,26 +37,34 @@ public class Player extends GameObject
         Damaged
     }
 
-    // Soudns identifiers
+    // Sounds identifiers
     public enum SoundType
     {
-        Laser
+        Laser,
+        Crash
     }
 
-    private boolean readyToFire = true;
+    private boolean isShooting = false;
     private boolean movingLeft = false;
     private boolean movingRight = false;
-
-    private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
-    private long lastCrashTime;
+    private long lastCrashTime, lastShootTime;
+    private GameScreen gameScreen;
+    private int numLives;
 
     //
     // position at center near the bottom
-    public Player(Game game)
+    public Player(GameScreen game)
     {
         x = GameScreen.gameWidth / 2;
         y = (int) (GameScreen.gameHeight * 0.8);
+        this.gameScreen = game;
+
         lastCrashTime = 0;
+        lastShootTime = 0;
+        isShooting = false;
+        movingLeft = false;
+        movingRight = false;
+        numLives = 3;
     }
 
     @Override
@@ -69,31 +78,16 @@ public class Player extends GameObject
 
         // add sounds using order of player.SoundType enum
         soundList.add(Assets.playerLaser);
+        soundList.add(Assets.playerCrash);
 
         // player ship is currently a 1 frame anim (doesn't really need to be an anim)
         anim.addFrame(Assets.player, 1000);
-    }
-    
-    private void updateProjectiles(float deltaTime)
-    {
-        for (int i = 0; i < projectiles.size(); i++)
-        {
-            Projectile p = projectiles.get(i);
-            if (p.isVisible() == true)
-            {
-                p.update(deltaTime);
-            } else
-            {
-                projectiles.remove(i);
-            }
-        }
     }
 
     @Override
     public void update(float deltaTime)
     {
         // Moves Character
-
         x += speedX;
         y += speedY;
 
@@ -114,20 +108,17 @@ public class Player extends GameObject
         bounds.set(x - (int)(WIDTH*.5), y - (int)(HEIGHT*.5),
                 x + (int)(WIDTH*.5), y + (int)(HEIGHT*.5));
 
-        updateProjectiles(deltaTime);
+        if (isShooting)
+            shoot();
 
         anim.update((int)(deltaTime * 1000));
+
+        checkCollision();
     }
 
     @Override
     public void draw(Graphics g)
     {
-        for (int i = 0; i < projectiles.size(); i++)
-        {
-            Projectile p = projectiles.get(i);
-            p.draw(g);
-        }
-
         // First draw the game elements.
         Image playerSprite = anim.getImage();
         if (getMovingLeft())
@@ -136,6 +127,30 @@ public class Player extends GameObject
             playerSprite = imageList.get(Player.ImageType.Right.ordinal());
 
         g.drawImage(playerSprite, x - (int) (WIDTH * .5), y - (int) (HEIGHT * .5));
+        drawBounds(g);
+    }
+
+    //
+    // check for collisions with asteroids
+    //
+    private void checkCollision()
+    {
+        for (int i=0; i<gameScreen.getGameObjects().size(); i++)
+        {
+            GameObject gameObject = gameScreen.getGameObjects().get(i);
+            if (gameObject.getType() == Type.Asteroid)
+            {
+                if (gameObject.getBounds().intersect(getBounds()))
+                {
+                    //Log.i("MOOSE", "checkCollision: HIT");
+                    gameObject.setDead(true);   // kill asteroid
+                    soundList.get(SoundType.Crash.ordinal()).play(1.0f);
+                    numLives = numLives - 1;
+                    if (numLives == 0)
+                        setDead(true);
+                }
+            }
+        }
     }
 
     public void stop()
@@ -144,27 +159,31 @@ public class Player extends GameObject
         movingLeft = movingRight = false;
     }
 
-    public void shoot()
+    private void shoot()
     {
-        if (readyToFire)
+        if (isReadyToFire())
         {
-            Projectile p = new Projectile(x-2, y - 25);
-            projectiles.add(p);
-
-            soundList.get(Player.SoundType.Laser.ordinal()).play(1.0f);
+            Projectile p = new Projectile(gameScreen, x-2, y - 25);
+            p.initAssets();
+            gameScreen.addGameObject(p);
+            soundList.get(SoundType.Laser.ordinal()).play(1.0f);
+            lastShootTime = System.currentTimeMillis();
         }
     }
 
     //
     // play crash time (once every half second)
+    // wall crash
     //
     public void crash()
     {
         long curTime = System.currentTimeMillis();
         if (curTime - lastCrashTime > 500)
         {
-            // TODO - use Assets directly or cache in GameServer copy?
-            Assets.playerCrash.play(1.0f);
+            soundList.get(SoundType.Crash.ordinal()).play(1.0f);
+            numLives = numLives - 1;
+            if (numLives == 0)
+                setDead(true);
             lastCrashTime = curTime;
         }
     }
@@ -178,21 +197,11 @@ public class Player extends GameObject
         return movingRight;
     }
 
-
-    public ArrayList getProjectiles()
-    {
-        return projectiles;
-    }
-
     public boolean isReadyToFire()
     {
-        return readyToFire;
+        return (System.currentTimeMillis() - lastShootTime) > TIME_BETWEEN_SHOTS;
     }
 
-    public void setReadyToFire(boolean readyToFire)
-    {
-        this.readyToFire = readyToFire;
-    }
     public void setMovingLeft(boolean movingLeft)
     {
         this.movingLeft = movingLeft;
@@ -205,5 +214,27 @@ public class Player extends GameObject
         if (movingRight)
             this.movingLeft = false;
     }
+
+    public int getNumLives()
+    {
+        return numLives;
+    }
+
+    public void setNumLives(int numLives)
+    {
+        this.numLives = numLives;
+    }
+
+    @Override
+    public int getWidth() { return WIDTH; }
+
+    @Override
+    public int getHeight() { return HEIGHT; }
+
+    public boolean isShooting() { return isShooting;   }
+    public void setShooting(boolean shooting)   {  isShooting = shooting;  }
+
+    @Override
+    public GameObject.Type getType() { return Type.Player; }
 
 }

@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.mustafathamer.RobotAndroid.GameScreen.GameState.Ready;
-import static com.mustafathamer.RobotAndroid.GameScreen.GameState.Running;
 
 /**
  * Created by Mus on 11/25/2016.
@@ -30,7 +28,7 @@ public class GameScreen extends Screen
         Ready, Running, Paused, GameOver
     }
 
-    GameState state = Ready;
+    GameState state = GameState.Ready;
 
     // Variable Setup
 
@@ -39,13 +37,13 @@ public class GameScreen extends Screen
 
     private ArrayList<GameObject> gameObjects;
     private TileMap tileMap;
-    private int livesLeft = 1;
     private Paint paint, paint2;
     private int prevMoveEventX = 0;
     private int prevMoveEventY = 0;
     private Rect shootButtonBounds;
     private BackgroundMgr bgndMgr;
     private Random rand;
+    private int score;
 
     public GameScreen(Game game)
     {
@@ -71,7 +69,7 @@ public class GameScreen extends Screen
         // Initialize game objects here
         // Make sure to set objects to null in uninit
 
-        playerObj = new Player(game);
+        playerObj = new Player(this);
         playerObj.initAssets();
 
         tileMap = new TileMap();
@@ -89,6 +87,8 @@ public class GameScreen extends Screen
         paint2.setTextAlign(Paint.Align.CENTER);
         paint2.setAntiAlias(true);
         paint2.setColor(Color.WHITE);
+
+        score = 0;
     }
 
     @Override
@@ -130,7 +130,7 @@ public class GameScreen extends Screen
         // Now the updateRunning() method will be called!
 
         if (touchEvents.size() > 0)
-            state = Running;
+            state = GameState.Running;
     }
 
     //
@@ -147,14 +147,18 @@ public class GameScreen extends Screen
             // SHOOT BUTTON
             boolean shootButtonEvent = inBounds(event, shootButtonBounds.left, shootButtonBounds.top, shootButtonBounds.width(), shootButtonBounds.height());
             boolean pauseEvent = inBounds(event, 0, 0, 35, 35);
-            boolean moveShipEvent = (event.y > game.getGraphics().getHeight() * .2) && event.pointer == 0;
+            boolean moveShipEvent = (event.y > game.getGraphics().getHeight() * .2);    // && event.pointer == 0;
 
 //            Log.i("MOOSE", "Event, PrevX=" + prevMoveEventX + ", X=" + event.x + ", Y=" + event.y + ", Type=" + event.type
 //            + ", Ptr=" + event.pointer);
 
-            if (shootButtonEvent && event.type == TouchEvent.TOUCH_DOWN)
+            if (shootButtonEvent)
             {
-                playerObj.shoot();
+                if (event.type == TouchEvent.TOUCH_DOWN)
+                    playerObj.setShooting(true);        // start shooting
+                else
+                    if (event.type == TouchEvent.TOUCH_UP)
+                        playerObj.setShooting(false);   // stop shooting
             }
 
             if (pauseEvent && event.type == TouchEvent.TOUCH_DOWN)
@@ -207,22 +211,6 @@ public class GameScreen extends Screen
                     diffY = Math.max(diffY, -playerObj.MOVESPEED * 5);   // clamp
                 }
 
-//                Log.i("\tMOOSE", "\tdiffX=" + diffX + ", moveLeft=" + moveLeft + ", moveRight=" + moveRight);
-
-                /*
-                // MOVE LEFT OR RIGHT
-                if (moveX)
-                {
-                    playerObj.setSpeedX(diffX);
-                }
-
-                // MOVE UP OR DOWN
-                if (moveY)
-                {
-                    playerObj.setSpeedY(diffY);
-                }
-                */
-
                 // set player above the touch point
                 playerObj.setX(event.x);
                 playerObj.setY(event.y - 75);
@@ -232,12 +220,6 @@ public class GameScreen extends Screen
             }
         }
 
-// 2. Check miscellaneous events like death:
-
-        if (livesLeft == 0)
-        {
-            state = GameState.GameOver;
-        }
 
         // 3. Call individual update() methods here.
         // This is where all the game updates happen.
@@ -322,43 +304,46 @@ public class GameScreen extends Screen
     //
     private void addNewGameObjects()
     {
-        int r = rand.nextInt(1000) + 1;      // from 1 to 100
+        int r = rand.nextInt(1000 - getScore()*25) + 1;      // from 1 to 1000, chance increases as score goes up
         GameObject rock = null;
         switch (r)
         {
             case 1:
-                rock = new Asteroid(Asteroid.Type.Large1);
-                Log.i("MOOSE", "addNewGameObjects: Rock Large1");
+                rock = new Asteroid(this, Asteroid.Type.Large1);
+ //               Log.i("MOOSE", "addNewGameObjects: Rock Large1");
                 break;
             case 2:
-                rock = new Asteroid(Asteroid.Type.Large2);
-                Log.i("MOOSE", "addNewGameObjects: Rock Large2");
+                rock = new Asteroid(this, Asteroid.Type.Large2);
+ //               Log.i("MOOSE", "addNewGameObjects: Rock Large2");
                 break;
             case 3:
-                rock = new Asteroid(Asteroid.Type.Medium1);
-                Log.i("MOOSE", "addNewGameObjects: Rock Medium1");
+                rock = new Asteroid(this, Asteroid.Type.Medium1);
+ //               Log.i("MOOSE", "addNewGameObjects: Rock Medium1");
                 break;
             case 4:
-                rock = new Asteroid(Asteroid.Type.Medium2);
-                Log.i("MOOSE", "addNewGameObjects: Rock Medium2");
+                rock = new Asteroid(this, Asteroid.Type.Medium2);
+ //               Log.i("MOOSE", "addNewGameObjects: Rock Medium2");
                 break;
             case 5:
-                rock = new Asteroid(Asteroid.Type.Small1);
-                Log.i("MOOSE", "addNewGameObjects: Rock Small1");
+                rock = new Asteroid(this, Asteroid.Type.Small1);
+ //               Log.i("MOOSE", "addNewGameObjects: Rock Small1");
                 break;
             case 6:
-                rock = new Asteroid(Asteroid.Type.Small2);
-                Log.i("MOOSE", "addNewGameObjects: Rock Small2");
+                rock = new Asteroid(this, Asteroid.Type.Small2);
+ //               Log.i("MOOSE", "addNewGameObjects: Rock Small2");
                 break;
         }
 
         if (rock != null)
         {
             rock.initAssets();
-            int x = rand.nextInt(gameWidth - 100) + 50;
+            // border tile is 32 wide
+            int border = 35;
+            int x = rand.nextInt(gameWidth - border - rock.getWidth());
             int y = rand.nextInt(200);
             rock.setPos(x, y);
-            AddGameObject(rock);
+ //           Log.i("MOOSE", "\tpos:" + x + ", " + y);
+            addGameObject(rock);
         }
     }
 
@@ -367,6 +352,8 @@ public class GameScreen extends Screen
     //
     public void updateGameObjects(float deltaTime)
     {
+        assert(gameObjects.size() < 100);
+
         // update all objects
         for (int i = 0; i < gameObjects.size(); i++)
         {
@@ -380,6 +367,13 @@ public class GameScreen extends Screen
                 gameObjects.remove(i);
             else
                 i++;
+        }
+
+        if (playerObj.isDead())
+        {
+            //unInit();
+            goToMenu();
+            state = GameState.GameOver;
         }
     }
 
@@ -448,7 +442,7 @@ public class GameScreen extends Screen
         Graphics g = game.getGraphics();
         int startY = 0; // (int) (g.getHeight() * .1);
         int buttonDim = 65;
-        int startX = (int) (g.getWidth() * .85);
+        int startX = (int) (g.getWidth() - buttonDim);
         r.set(startX - bloat, startY - bloat,                       // left, top
                 startX + buttonDim + bloat, startY + buttonDim + bloat);    // right bottom
     }
@@ -458,7 +452,7 @@ public class GameScreen extends Screen
         Graphics g = game.getGraphics();
 
         g.drawARGB(155, 0, 0, 0);
-        g.drawString("Tap to Start.", g.getWidth() / 2, g.getHeight() / 2, paint);
+        g.drawString("Tap to Start", g.getWidth() / 2, g.getHeight() / 2, paint);
     }
 
     private void drawRunningUI()
@@ -466,7 +460,7 @@ public class GameScreen extends Screen
         Graphics g = game.getGraphics();
         int startY = 0; //(int) (g.getHeight() * .9);
         int buttonDim = 65;
-        int startX = (int) (g.getWidth() * .85);
+        int startX = (int) (g.getWidth() - buttonDim);
 
         // 3 button panel, each button 65 pixels square, draw center button only
         g.drawImage(Assets.button,          // image
@@ -476,6 +470,10 @@ public class GameScreen extends Screen
 
         // pause button at top left
         g.drawImage(Assets.button, 0, 0, buttonDim * 3, 35, 35, 35);
+
+        // draw LIVES and score
+        String hud = "Lives:" + playerObj.getNumLives() + "  Score:" + getScore();
+        g.drawString(hud, g.getWidth()/2, (int)paint.getTextSize(), paint);
     }
 
     private void drawPausedUI()
@@ -499,7 +497,7 @@ public class GameScreen extends Screen
     @Override
     public void pause()
     {
-        if (state == Running)
+        if (state == GameState.Running)
             state = GameState.Paused;
 
     }
@@ -508,7 +506,7 @@ public class GameScreen extends Screen
     public void resume()
     {
         if (state == GameState.Paused)
-            state = Running;
+            state = GameState.Running;
     }
 
     @Override
@@ -533,13 +531,28 @@ public class GameScreen extends Screen
         return playerObj;
     }
 
-    public void AddGameObject(GameObject gameObject)
+    public ArrayList<GameObject> getGameObjects()
+    {
+        return gameObjects;
+    }
+
+    public void addGameObject(GameObject gameObject)
     {
         gameObjects.add(gameObject);
     }
 
-    public void RemoveGameObject(GameObject gameObject)
+    public void removeGameObject(GameObject gameObject)
     {
         gameObjects.remove(gameObject);
+    }
+
+    public int getScore()
+    {
+        return score;
+    }
+
+    public void setScore(int score)
+    {
+        this.score = score;
     }
 }

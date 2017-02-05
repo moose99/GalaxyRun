@@ -1,40 +1,38 @@
 package com.mustafathamer.RobotAndroid;
 
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 
-import com.mustafathamer.framework.Game;
 import com.mustafathamer.framework.Graphics;
-import com.mustafathamer.framework.Image;
 import com.mustafathamer.framework.Sound;
 
 import java.util.ArrayList;
+
+import static android.R.attr.type;
 
 /**
  * Created by Mus on 1/24/2017.
  * Base class for game objects, like asteroids, aliens, etc
  */
 
-public class GameObject
+public abstract class GameObject
 {
+    enum Type
+    {
+        Player,
+        Asteroid,
+        Projectile
+    }
+
     protected ArrayList<Sound> soundList = new ArrayList<Sound>();
 
     protected Rect bounds = new Rect();
     protected Animation anim = new Animation();
     protected int x = 0, y = 0;                 // center
     protected int speedX = 0, speedY = 0;       // velocity
-    protected boolean visible = false;
-
-    public boolean isDead()
-    {
-        return dead;
-    }
-
-    public void setDead(boolean dead)
-    {
-        this.dead = dead;
-    }
-
     protected boolean dead = false;                     // set dead when it should be removed the game
+    protected Type type;
 
     public GameObject()
     {
@@ -55,6 +53,25 @@ public class GameObject
     {
 
     }
+
+    // DEBUG ONLY
+    public void drawBounds(Graphics g)
+    {
+       // g.strokeRect(bounds.left, bounds.top, bounds.width(), bounds.height(), Color.RED);
+    }
+
+    //
+    // update bounds based on x,y and width, height
+    // assume x,y is upper left
+    //
+    public void updateBounds(int w, int h)
+    {
+        bounds.set(x, y, x + w, y + h);
+    }
+
+    public abstract int getWidth();
+
+    public abstract int getHeight();
 
     public Rect getBounds()
     {
@@ -96,7 +113,11 @@ public class GameObject
         this.y = y;
     }
 
-    public void setPos(int x, int y) { this.x = x; this.y = y; }
+    public void setPos(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
 
     public int getSpeedX()
     {
@@ -128,14 +149,15 @@ public class GameObject
         this.soundList = soundList;
     }
 
-    public boolean isVisible()
+    public boolean isDead()
     {
-        return visible;
+        return dead;
     }
 
-    public void setVisible(boolean visible)
+    public void setDead(boolean dead)
     {
-        this.visible = visible;
+        this.dead = dead;
     }
 
+    public abstract Type getType();
 }
