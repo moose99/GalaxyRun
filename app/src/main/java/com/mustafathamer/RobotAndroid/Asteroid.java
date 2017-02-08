@@ -5,6 +5,7 @@ import com.mustafathamer.framework.Graphics;
 
 /**
  * Created by Mus on 1/24/2017.
+ * x, y position specifies the center of the object
  */
 
 public class Asteroid extends GameObject
@@ -38,13 +39,13 @@ public class Asteroid extends GameObject
             {
                 case Large1:
                     anim.addFrame(Assets.largeRock1[i], (int) (1000.0 / Assets.numAsteroidImages));
-                    height = 160;
-                    width = 160;
+                    height = 150;
+                    width = 150;
                     break;
                 case Large2:
                     anim.addFrame(Assets.largeRock2[i], (int) (1000.0 / Assets.numAsteroidImages));
-                    height = 160;
-                    width = 160;
+                    height = 150;
+                    width = 150;
                     break;
                 case Medium1:
                     anim.addFrame(Assets.mediumRock1[i], (int) (1000.0 / Assets.numAsteroidImages));
@@ -73,7 +74,8 @@ public class Asteroid extends GameObject
     @Override
     public void draw(Graphics g)
     {
-        g.drawImage(anim.getImage(), x, y);
+        // draw image so it is centered at x, y
+        g.drawImage(anim.getImage(), x - anim.getImage().getWidth()/2, y - anim.getImage().getHeight()/2);
         drawBounds(g);
     }
 
@@ -84,34 +86,36 @@ public class Asteroid extends GameObject
 
         speedY = Background.speedY * 2;
         y += speedY;
+        x += speedX;
 
+        updateBounds(getWidth(), getHeight());
+
+        // bounce off the walls
+        int border = 32;
+        if ( (getBounds().right >= GameScreen.gameWidth - border) || getBounds().left <= border )
+        {
+            speedX = -speedX;
+        }
+
+        // go off the bottom of the screen
         if (y>GameScreen.gameHeight)
         {
             setDead(true);
             if (gameScreen.getScore() > 0)
                 gameScreen.setScore(gameScreen.getScore()-1);
         }
-
-        updateBounds(getWidth(), getHeight());
     }
 
     //
     // update bounds based on x,y and width, height
-    // assume x,y is upper left.
-    // In this case, the asteroid images are twice as big as needed, with the rock in the center
+    // assume x,y is center of the rock
+    // In this case, the asteroid images are ~twice as big as needed, with the rock in the center
     //
     @Override
     public void updateBounds(int w, int h)
     {
-        int left = x+width/2;
-        int top = y+height/2;
-
-        if (type == Type.Large1 || type == Type.Large2)
-        {
-            // special case for large rocks
-            left = x+90;
-            top = y+30;
-        }
+        int left = x - w/2;
+        int top = y - h/2;
         bounds.set(left, top, left + w, top + h);
     }
 

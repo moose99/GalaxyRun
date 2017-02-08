@@ -310,27 +310,21 @@ public class GameScreen extends Screen
         {
             case 1:
                 rock = new Asteroid(this, Asteroid.Type.Large1);
- //               Log.i("MOOSE", "addNewGameObjects: Rock Large1");
                 break;
             case 2:
                 rock = new Asteroid(this, Asteroid.Type.Large2);
- //               Log.i("MOOSE", "addNewGameObjects: Rock Large2");
                 break;
             case 3:
                 rock = new Asteroid(this, Asteroid.Type.Medium1);
- //               Log.i("MOOSE", "addNewGameObjects: Rock Medium1");
                 break;
             case 4:
                 rock = new Asteroid(this, Asteroid.Type.Medium2);
- //               Log.i("MOOSE", "addNewGameObjects: Rock Medium2");
                 break;
             case 5:
                 rock = new Asteroid(this, Asteroid.Type.Small1);
- //               Log.i("MOOSE", "addNewGameObjects: Rock Small1");
                 break;
             case 6:
                 rock = new Asteroid(this, Asteroid.Type.Small2);
- //               Log.i("MOOSE", "addNewGameObjects: Rock Small2");
                 break;
         }
 
@@ -339,9 +333,10 @@ public class GameScreen extends Screen
             rock.initAssets();
             // border tile is 32 wide
             int border = 35;
-            int x = rand.nextInt(gameWidth - border - rock.getWidth());
+            int x = rand.nextInt(gameWidth - border*2 - rock.getWidth() * 2) + border + rock.getWidth();
             int y = rand.nextInt(200);
             rock.setPos(x, y);
+            rock.setSpeedX(rand.nextInt(11) - 5);    // random horiz speed from -5 to 5
  //           Log.i("MOOSE", "\tpos:" + x + ", " + y);
             addGameObject(rock);
         }

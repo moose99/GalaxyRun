@@ -5,7 +5,6 @@
 -add overheat bar
 
 ROCKS
--add horizontal motion to rocks, bounce off walls
 -add sounds to rocks
 -add explosions
 

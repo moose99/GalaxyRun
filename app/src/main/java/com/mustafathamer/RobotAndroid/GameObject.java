@@ -57,7 +57,7 @@ public abstract class GameObject
     // DEBUG ONLY
     public void drawBounds(Graphics g)
     {
-       // g.strokeRect(bounds.left, bounds.top, bounds.width(), bounds.height(), Color.RED);
+       g.strokeRect(bounds.left, bounds.top, bounds.width(), bounds.height(), Color.RED);
     }
 
     //

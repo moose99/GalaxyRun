@@ -26,7 +26,7 @@ public class Player extends GameObject
     public final int MOVESPEED = 5;
     public final int WIDTH = 99;   // from image
     public final int HEIGHT = 75;  // from image
-    private final int TIME_BETWEEN_SHOTS = 200;     // in millis, 5 shots per sec
+    private final int TIME_BETWEEN_SHOTS = 150;     // in millis, 5 shots per sec
 
     // lmage identifiers
     public enum ImageType
@@ -64,7 +64,7 @@ public class Player extends GameObject
         isShooting = false;
         movingLeft = false;
         movingRight = false;
-        numLives = 3;
+        numLives = 10;
     }
 
     @Override
