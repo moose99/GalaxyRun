@@ -1,4 +1,4 @@
-package com.mustafathamer.RobotAndroid;
+package com.mustafathamer.GalaxyRun;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -6,7 +6,7 @@ import android.util.Log;
 import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Image;
 
-import static com.mustafathamer.RobotAndroid.GameScreen.gameHeight;
+import static com.mustafathamer.GalaxyRun.GameScreen.gameHeight;
 
 /**
  * Created by Mus on 1/22/2017.

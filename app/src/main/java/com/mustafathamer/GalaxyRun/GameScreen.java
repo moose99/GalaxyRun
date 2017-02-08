@@ -1,4 +1,4 @@
-package com.mustafathamer.RobotAndroid;
+package com.mustafathamer.GalaxyRun;
 
 import android.graphics.Color;
 import android.graphics.Paint;

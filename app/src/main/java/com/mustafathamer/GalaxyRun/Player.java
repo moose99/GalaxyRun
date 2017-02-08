@@ -1,18 +1,9 @@
-package com.mustafathamer.RobotAndroid;
+package com.mustafathamer.GalaxyRun;
 
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.util.Log;
-
-import com.mustafathamer.framework.Game;
 import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Image;
 
 import java.util.ArrayList;
-
-import static android.R.attr.x;
-import static android.R.attr.y;
-import static android.R.attr.width;
 
 /**
  * Created by Mus on 11/26/2016.

@@ -1,12 +1,10 @@
-package com.mustafathamer.RobotAndroid;
+package com.mustafathamer.GalaxyRun;
 
-import android.provider.MediaStore;
 import android.util.Log;
 
 import com.mustafathamer.framework.Game;
 import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Graphics.ImageFormat;
-import com.mustafathamer.framework.Image;
 import com.mustafathamer.framework.Screen;
 
 /**

@@ -1,15 +1,12 @@
-package com.mustafathamer.RobotAndroid;
+package com.mustafathamer.GalaxyRun;
 
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Sound;
 
 import java.util.ArrayList;
-
-import static android.R.attr.type;
 
 /**
  * Created by Mus on 1/24/2017.

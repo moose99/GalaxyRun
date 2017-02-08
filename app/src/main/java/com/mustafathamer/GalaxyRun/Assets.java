@@ -1,4 +1,4 @@
-package com.mustafathamer.RobotAndroid;
+package com.mustafathamer.GalaxyRun;
 
 import com.mustafathamer.framework.Game;
 import com.mustafathamer.framework.Graphics;
@@ -34,7 +34,7 @@ public class Assets
 
     // TODO - this should probably load all the assets, only. Play the music in the loading or menu screen
     // TODO - organize assets by level?
-    public static void load(RobotAndroidGame sampleGame)
+    public static void load(GalaxyRunGame sampleGame)
     {
         theme = sampleGame.getAudio().createMusic("xeon6.ogg"); //"Lines of Code.mp3");
         theme.setLooping(true);

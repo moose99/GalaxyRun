@@ -1,8 +1,6 @@
-package com.mustafathamer.RobotAndroid;
+package com.mustafathamer.GalaxyRun;
 
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.TextView;
 
 import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Image;

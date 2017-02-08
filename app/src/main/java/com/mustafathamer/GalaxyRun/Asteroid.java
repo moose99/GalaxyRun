@@ -1,4 +1,4 @@
-package com.mustafathamer.RobotAndroid;
+package com.mustafathamer.GalaxyRun;
 
 import com.mustafathamer.framework.Graphics;
 

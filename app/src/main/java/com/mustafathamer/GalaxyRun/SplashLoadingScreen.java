@@ -1,9 +1,8 @@
-package com.mustafathamer.RobotAndroid;
+package com.mustafathamer.GalaxyRun;
 
 import com.mustafathamer.framework.Game;
 import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Screen;
-import com.mustafathamer.framework.Graphics.ImageFormat;
 
 /**
  * Created by Mus on 11/26/2016.

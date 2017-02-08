@@ -1,4 +1,4 @@
-package com.mustafathamer.RobotAndroid;
+package com.mustafathamer.GalaxyRun;
 
 import android.util.Log;
 
@@ -22,7 +22,7 @@ import java.io.InputStreamReader;
  * we set most of the screen layouts in the onCreate method of the AndroidGame class.
  */
 
-public class RobotAndroidGame extends AndroidGame
+public class GalaxyRunGame extends AndroidGame
 {
     public static String map;
     boolean firstTimeCreate = true;
