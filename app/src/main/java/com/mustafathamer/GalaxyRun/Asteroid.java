@@ -2,7 +2,6 @@ package com.mustafathamer.GalaxyRun;
 
 import com.mustafathamer.framework.Graphics;
 
-
 /**
  * Created by Mus on 1/24/2017.
  * x, y position specifies the center of the object
@@ -10,7 +9,7 @@ import com.mustafathamer.framework.Graphics;
 
 public class Asteroid extends GameObject
 {
-    static public enum Type
+    public enum Size
     {
         Large1,
         Large2,
@@ -21,12 +20,12 @@ public class Asteroid extends GameObject
     }
 
     private int height, width;
-    private Type type;
+    private Size size;
     private GameScreen gameScreen;
 
-    public Asteroid(GameScreen game, Type t)
+    public Asteroid(GameScreen game, Size t)
     {
-        type = t;
+        size = t;
         gameScreen = game;
     }
 
@@ -35,37 +34,43 @@ public class Asteroid extends GameObject
     {
         for (int i = 0; i < Assets.numAsteroidImages; i++)
         {
-            switch (type)
+            switch (size)
             {
                 case Large1:
                     anim.addFrame(Assets.largeRock1[i], (int) (1000.0 / Assets.numAsteroidImages));
                     height = 150;
                     width = 150;
+                    speedY = Background.speedY * 2;
                     break;
                 case Large2:
                     anim.addFrame(Assets.largeRock2[i], (int) (1000.0 / Assets.numAsteroidImages));
                     height = 150;
                     width = 150;
+                    speedY = Background.speedY * 2;
                     break;
                 case Medium1:
                     anim.addFrame(Assets.mediumRock1[i], (int) (1000.0 / Assets.numAsteroidImages));
                     height = 60;
                     width = 60;
+                    speedY = Background.speedY * 3;
                     break;
                 case Medium2:
                     anim.addFrame(Assets.mediumRock2[i], (int) (1000.0 / Assets.numAsteroidImages));
                     height = 60;
                     width = 60;
+                    speedY = Background.speedY * 3;
                     break;
                 case Small1:
                     anim.addFrame(Assets.smallRock1[i], (int) (1000.0 / Assets.numAsteroidImages));
                     height = 32;
                     width = 32;
+                    speedY = Background.speedY * 4;
                     break;
                 case Small2:
                     anim.addFrame(Assets.smallRock2[i], (int) (1000.0 / Assets.numAsteroidImages));
                     height = 32;
                     width = 32;
+                    speedY = Background.speedY * 4;
                     break;
             }
         }
@@ -84,7 +89,6 @@ public class Asteroid extends GameObject
     {
         anim.update(15);
 
-        speedY = Background.speedY * 2;
         y += speedY;
         x += speedX;
 
@@ -133,4 +137,18 @@ public class Asteroid extends GameObject
 
     @Override
     public GameObject.Type getType() { return GameObject.Type.Asteroid; }
+
+    public Size getSize()    { return size;    }
+
+    public Size getSmallerSize()
+    {
+        switch(size)
+        {
+            case Large1:    return Asteroid.Size.Medium1;
+            case Large2:    return Asteroid.Size.Medium2;
+            case Medium1:   return Asteroid.Size.Small1;
+            case Medium2:   return Asteroid.Size.Small2;
+            default:        return null;
+        }
+    }
 }

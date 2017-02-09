@@ -309,37 +309,68 @@ public class GameScreen extends Screen
         switch (r)
         {
             case 1:
-                rock = new Asteroid(this, Asteroid.Type.Large1);
+                rock = addNewRock(Asteroid.Size.Large1);
                 break;
             case 2:
-                rock = new Asteroid(this, Asteroid.Type.Large2);
+                rock = addNewRock(Asteroid.Size.Large2);
                 break;
             case 3:
-                rock = new Asteroid(this, Asteroid.Type.Medium1);
+                rock = addNewRock(Asteroid.Size.Medium1);
                 break;
             case 4:
-                rock = new Asteroid(this, Asteroid.Type.Medium2);
+                rock = addNewRock(Asteroid.Size.Medium2);
                 break;
             case 5:
-                rock = new Asteroid(this, Asteroid.Type.Small1);
+                rock = addNewRock(Asteroid.Size.Small1);
                 break;
             case 6:
-                rock = new Asteroid(this, Asteroid.Type.Small2);
+                rock = addNewRock(Asteroid.Size.Small2);
                 break;
         }
 
         if (rock != null)
         {
-            rock.initAssets();
             // border tile is 32 wide
             int border = 35;
             int x = rand.nextInt(gameWidth - border*2 - rock.getWidth() * 2) + border + rock.getWidth();
             int y = rand.nextInt(200);
             rock.setPos(x, y);
-            rock.setSpeedX(rand.nextInt(11) - 5);    // random horiz speed from -5 to 5
- //           Log.i("MOOSE", "\tpos:" + x + ", " + y);
-            addGameObject(rock);
         }
+    }
+
+    private GameObject addNewRock(Asteroid.Size size)
+    {
+        if (size == null)
+            return null;
+
+        GameObject rock = null;
+        switch (size)
+        {
+            case Large1:
+                rock = new Asteroid(this, Asteroid.Size.Large1);
+                break;
+            case Large2:
+                rock = new Asteroid(this, Asteroid.Size.Large2);
+                break;
+            case Medium1:
+                rock = new Asteroid(this, Asteroid.Size.Medium1);
+                break;
+            case Medium2:
+                rock = new Asteroid(this, Asteroid.Size.Medium2);
+                break;
+            case Small1:
+                rock = new Asteroid(this, Asteroid.Size.Small1);
+                break;
+            case Small2:
+                rock = new Asteroid(this, Asteroid.Size.Small2);
+                break;
+        }
+
+        rock.initAssets();
+        rock.setSpeedX(rand.nextInt(11) - 5);    // random horiz speed from -5 to 5
+
+        addGameObject(rock);
+        return rock;
     }
 
     //
@@ -359,7 +390,17 @@ public class GameScreen extends Screen
         for (int i = 0; i < gameObjects.size(); )
         {
             if (gameObjects.get(i).isDead())
+            {
+                // Some rocks get replaced with smaller ones
+                if (gameObjects.get(i).getType() == GameObject.Type.Asteroid)
+                {
+                    Asteroid rock = (Asteroid)gameObjects.get(i);
+                    GameObject newRock = addNewRock(rock.getSmallerSize());
+                    if (newRock != null)
+                        newRock.setPos(rock.getX(), rock.getY());
+                }
                 gameObjects.remove(i);
+            }
             else
                 i++;
         }
