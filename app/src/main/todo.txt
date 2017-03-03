@@ -1,9 +1,13 @@
+-remove shoot control
+-fix menus
+-add splash
 -change menus
 -add aliens
--add powerups
+-add powerups (cannon, shield, time slow, half size, cloak)
 -add overheat bar
 
 ROCKS
 -add sounds to rocks
 -add explosions
+-add particle system
 

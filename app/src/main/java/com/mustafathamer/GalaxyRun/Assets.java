@@ -6,6 +6,9 @@ import com.mustafathamer.framework.Music;
 import com.mustafathamer.framework.Sound;
 import com.mustafathamer.framework.Image;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Created by Mus on 11/23/2016.
  * <p>
@@ -40,6 +43,17 @@ public class Assets
         theme.setLooping(true);
         theme.setVolume(0.8f);
         theme.play();
+
+        try
+        {
+            InputStream is = sampleGame.getFileIO().readAsset("sheet.xml");
+            SpriteSheet xmlSpriteSheet = new SpriteSheet();
+            xmlSpriteSheet.Read(is);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public static boolean loadLargeRocks(Graphics g)
