@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
 /**
  * Created by Mus on 11/25/2016.
  * We make use of GameStates to call different sets of update/paint methods, rather than creating
@@ -40,7 +39,6 @@ public class GameScreen extends Screen
     private Paint paint, paint2;
     private int prevMoveEventX = 0;
     private int prevMoveEventY = 0;
-    private Rect shootButtonBounds;
     private BackgroundMgr bgndMgr;
     private Random rand;
     private int score;
@@ -59,9 +57,6 @@ public class GameScreen extends Screen
 
         rand = new Random();
         gameObjects = new ArrayList<>();
-
-        shootButtonBounds = new Rect();
-        getShootButtonBounds(shootButtonBounds);
 
         bgndMgr = new BackgroundMgr();
         bgndMgr.init();
@@ -145,21 +140,12 @@ public class GameScreen extends Screen
             TouchEvent event = (TouchEvent) touchEvents.get(i);
 
             // SHOOT BUTTON
-            boolean shootButtonEvent = inBounds(event, shootButtonBounds.left, shootButtonBounds.top, shootButtonBounds.width(), shootButtonBounds.height());
             boolean pauseEvent = inBounds(event, 0, 0, 35, 35);
             boolean moveShipEvent = (event.y > game.getGraphics().getHeight() * .2);    // && event.pointer == 0;
 
 //            Log.i("MOOSE", "Event, PrevX=" + prevMoveEventX + ", X=" + event.x + ", Y=" + event.y + ", Type=" + event.type
 //            + ", Ptr=" + event.pointer);
 
-            if (shootButtonEvent)
-            {
-                if (event.type == TouchEvent.TOUCH_DOWN)
-                    playerObj.setShooting(true);        // start shooting
-                else
-                    if (event.type == TouchEvent.TOUCH_UP)
-                        playerObj.setShooting(false);   // stop shooting
-            }
 
             if (pauseEvent && event.type == TouchEvent.TOUCH_DOWN)
             {
@@ -304,38 +290,90 @@ public class GameScreen extends Screen
     //
     private void addNewGameObjects()
     {
-        int r = rand.nextInt(1000 - getScore()*25) + 1;      // from 1 to 1000, chance increases as score goes up
-        GameObject rock = null;
+        int r = rand.nextInt(500);  // 800 - getScore()*20) + 1;      // from 1 to 1000, chance increases as score goes up
+        GameObject gameObject = null;
         switch (r)
         {
             case 1:
-                rock = addNewRock(Asteroid.Size.Large1);
+                gameObject = addNewRock(Asteroid.Size.Large1);
                 break;
             case 2:
-                rock = addNewRock(Asteroid.Size.Large2);
+                gameObject = addNewRock(Asteroid.Size.Large2);
                 break;
             case 3:
-                rock = addNewRock(Asteroid.Size.Medium1);
+                gameObject = addNewRock(Asteroid.Size.Medium1);
                 break;
             case 4:
-                rock = addNewRock(Asteroid.Size.Medium2);
+                gameObject = addNewRock(Asteroid.Size.Medium2);
                 break;
             case 5:
-                rock = addNewRock(Asteroid.Size.Small1);
+                gameObject = addNewRock(Asteroid.Size.Small1);
                 break;
             case 6:
-                rock = addNewRock(Asteroid.Size.Small2);
+                gameObject = addNewRock(Asteroid.Size.Small2);
                 break;
+
+            case 7:
+            case 8:
+                gameObject = addNewPowerUp("powerupBlue_bolt.png");
+                break;
+            case 9:
+            case 10:
+                gameObject = addNewPowerUp("powerupBlue_shield.png");
+                break;
+//            case 9:
+//                gameObject = addNewPowerUp("powerupBlue_star.png");
+//                break;
+/*
+            case 10:
+                gameObject = addNewPowerUp("powerupGreen_bolt.png");
+                break;
+            case 11:
+                gameObject = addNewPowerUp("powerupGreen_shield.png");
+                break;
+            case 12:
+                gameObject = addNewPowerUp("powerupGreen_star.png");
+                break;
+
+            case 13:
+                gameObject = addNewPowerUp("powerupRed_bolt.png");
+                break;
+            case 14:
+                gameObject = addNewPowerUp("powerupRed_shield.png");
+                break;
+            case 15:
+                gameObject = addNewPowerUp("powerupRed_star.png");
+                break;
+
+            case 16:
+                gameObject = addNewPowerUp("powerupYellow_bolt.png");
+                break;
+            case 17:
+                gameObject = addNewPowerUp("powerupYellow_shield.png");
+                break;
+            case 18:
+                gameObject = addNewPowerUp("powerupYellow_star.png");
+                break;
+                */
         }
 
-        if (rock != null)
+        if (gameObject != null)
         {
             // border tile is 32 wide
             int border = 35;
-            int x = rand.nextInt(gameWidth - border*2 - rock.getWidth() * 2) + border + rock.getWidth();
+            int x = rand.nextInt(gameWidth - border*2 - gameObject.getWidth() * 2) + border + gameObject.getWidth();
             int y = rand.nextInt(200);
-            rock.setPos(x, y);
+            gameObject.setPos(x, y);
         }
+    }
+
+    private GameObject addNewPowerUp(String name)
+    {
+        PowerUp powerUp = new PowerUp();
+        powerUp.initAssets(name);
+        powerUp.setSpeedX(rand.nextInt(11) - 5);    // random horiz speed from -5 to 5
+        addGameObject(powerUp);
+        return powerUp;
     }
 
     private GameObject addNewRock(Asteroid.Size size)
@@ -464,23 +502,11 @@ public class GameScreen extends Screen
         paint2 = null;
         bgndMgr = null;
         gameObjects = null;
-        shootButtonBounds = null;
         playerObj = null;
         tileMap = null;
 
         // Call garbage collector to clean up memory.
         System.gc();
-    }
-
-    private void getShootButtonBounds(Rect r)
-    {
-        int bloat = 2;
-        Graphics g = game.getGraphics();
-        int startY = 0; // (int) (g.getHeight() * .1);
-        int buttonDim = 65;
-        int startX = (int) (g.getWidth() - buttonDim);
-        r.set(startX - bloat, startY - bloat,                       // left, top
-                startX + buttonDim + bloat, startY + buttonDim + bloat);    // right bottom
     }
 
     private void drawReadyUI()
@@ -494,15 +520,7 @@ public class GameScreen extends Screen
     private void drawRunningUI()
     {
         Graphics g = game.getGraphics();
-        int startY = 0; //(int) (g.getHeight() * .9);
         int buttonDim = 65;
-        int startX = (int) (g.getWidth() - buttonDim);
-
-        // 3 button panel, each button 65 pixels square, draw center button only
-        g.drawImage(Assets.button,          // image
-                startX, startY,             // x, y
-                buttonDim, 0,               // srcx, srcy
-                buttonDim, buttonDim);      // width, height
 
         // pause button at top left
         g.drawImage(Assets.button, 0, 0, buttonDim * 3, 35, 35, 35);
@@ -510,6 +528,22 @@ public class GameScreen extends Screen
         // draw LIVES and score
         String hud = "Lives:" + playerObj.getNumLives() + "  Score:" + getScore();
         g.drawString(hud, g.getWidth()/2, (int)paint.getTextSize(), paint);
+
+        String abilityString="";
+        switch(playerObj.getAbility())
+        {
+            case Cloak:
+                abilityString = "Cloak";
+                break;
+            case Shield:
+                abilityString = "Shield";
+                break;
+            case Shooting:
+                abilityString = "Fire";
+                break;
+        }
+        if (abilityString.length() != 0)
+            g.drawString(abilityString, g.getWidth()/2, GameScreen.gameHeight-(int)paint.getTextSize(), paint);
     }
 
     private void drawPausedUI()

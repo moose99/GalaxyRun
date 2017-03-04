@@ -40,6 +40,7 @@ public class LoadingScreen extends Screen
             int hwAudioSampleRate = game.getAudio().getBestSampleRate();
             Log.i("MOOSE", "hwAudioSampleRate: " + hwAudioSampleRate);
 
+            Assets.loadSpriteSheets(g);
             Assets.loadBackground(g);
             Assets.loadPlayer(g, game);
             Assets.loadTileMap(g);

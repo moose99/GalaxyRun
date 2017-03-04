@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Mus on 1/24/2017.
- * Base class for game objects, like asteroids, aliens, etc
+ * Abstract base class for game objects, like asteroids, aliens, etc
  */
 
 public abstract class GameObject
@@ -19,7 +19,8 @@ public abstract class GameObject
     {
         Player,
         Asteroid,
-        Projectile
+        Projectile,
+        PowerUp
     }
 
     protected ArrayList<Sound> soundList = new ArrayList<Sound>();
@@ -28,7 +29,7 @@ public abstract class GameObject
     protected Animation anim = new Animation();
     protected int x = 0, y = 0;                 // center
     protected int speedX = 0, speedY = 0;       // velocity
-    protected boolean dead = false;                     // set dead when it should be removed the game
+    protected boolean dead = false;             // set dead when it should be removed the game
     protected Type type;
 
     public GameObject()
@@ -51,6 +52,25 @@ public abstract class GameObject
 
     }
 
+    public void bounceOffWalls()
+    {
+        // bounce off the walls
+        int border = 32;
+        if ( (getBounds().right >= GameScreen.gameWidth - border) || getBounds().left <= border )
+        {
+            speedX = -speedX;
+        }
+    }
+
+    public void checkBelowScreen()
+    {
+        // go off the bottom of the screen
+        if (y>GameScreen.gameHeight)
+        {
+            setDead(true);
+        }
+    }
+
     // DEBUG ONLY
     public void drawBounds(Graphics g)
     {
@@ -65,10 +85,6 @@ public abstract class GameObject
     {
         bounds.set(x, y, x + w, y + h);
     }
-
-    public abstract int getWidth();
-
-    public abstract int getHeight();
 
     public Rect getBounds()
     {
@@ -156,5 +172,8 @@ public abstract class GameObject
         this.dead = dead;
     }
 
+    // ABSTRACT METHODS
+    public abstract int getWidth();
+    public abstract int getHeight();
     public abstract Type getType();
 }

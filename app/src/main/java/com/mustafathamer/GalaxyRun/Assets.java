@@ -6,13 +6,10 @@ import com.mustafathamer.framework.Music;
 import com.mustafathamer.framework.Sound;
 import com.mustafathamer.framework.Image;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 /**
  * Created by Mus on 11/23/2016.
  * <p>
- * This Assets class is used to create a static variable for each resource
+ * This Assets class is used to create a variable for each resource
  * that we will use in the game.
  * We will initialize them in the LoadingScreen.
  * We define all the assets that will be used in our game, and also load & play the backgroundImg music at 85% volume.
@@ -20,6 +17,7 @@ import java.io.InputStream;
 
 public class Assets
 {
+    private static Game game;
     public static final int numBackgrounds=7;
     public static Image bgImg1, bgImg2;
 
@@ -32,30 +30,33 @@ public class Assets
     public static Image tileLeft, tileRight;
     public static Image player, playerLeft, playerRight, playerDamaged;
     public static Image button;
+    public static SpriteSheet ssReduxSprites;
+
     public static Sound playerLaser, playerCrash, explosion;
     public static Music theme;
 
     // TODO - this should probably load all the assets, only. Play the music in the loading or menu screen
     // TODO - organize assets by level?
-    public static void load(GalaxyRunGame sampleGame)
+    public  static void load(GalaxyRunGame sampleGame)
     {
+        Assets.game = sampleGame;
         theme = sampleGame.getAudio().createMusic("xeon6.ogg"); //"Lines of Code.mp3");
         theme.setLooping(true);
         theme.setVolume(0.8f);
         theme.play();
-
-        try
-        {
-            InputStream is = sampleGame.getFileIO().readAsset("sheet.xml");
-            SpriteSheet xmlSpriteSheet = new SpriteSheet();
-            xmlSpriteSheet.Read(is);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
     }
 
+    public static  boolean loadSpriteSheets(Graphics g)
+    {
+        ssReduxSprites = new SpriteSheet(game.getFileIO());
+        ssReduxSprites.addMatchingName("powerup");
+        ssReduxSprites.addMatchingName("enemy");
+        ssReduxSprites.addMatchingName("meteor");
+        ssReduxSprites.addMatchingName("shield");
+        ssReduxSprites.addMatchingName("ufo");
+        return ssReduxSprites.read(g, "sheet.xml", "sheet.png");
+    }
+    
     public static boolean loadLargeRocks(Graphics g)
     {
         // load large rock 1 - 2
@@ -148,7 +149,7 @@ public class Assets
         return true;
     }
 
-    public static boolean loadProjectiles(Graphics g, Game game)
+    public static  boolean loadProjectiles(Graphics g, Game game)
     {
         Assets.explosion = game.getAudio().createSound("explode.wav");
         return true;

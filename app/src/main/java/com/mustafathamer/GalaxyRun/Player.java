@@ -1,9 +1,13 @@
 package com.mustafathamer.GalaxyRun;
 
+import android.util.Log;
+
 import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Image;
 
 import java.util.ArrayList;
+
+import static com.mustafathamer.GalaxyRun.PowerUp.Ability.Shooting;
 
 /**
  * Created by Mus on 11/26/2016.
@@ -18,6 +22,8 @@ public class Player extends GameObject
     public final int WIDTH = 99;   // from image
     public final int HEIGHT = 75;  // from image
     private final int TIME_BETWEEN_SHOTS = 150;     // in millis, 5 shots per sec
+    private PowerUp.Ability ability;
+    private long abilityExpires;
 
     // lmage identifiers
     public enum ImageType
@@ -56,6 +62,7 @@ public class Player extends GameObject
         movingLeft = false;
         movingRight = false;
         numLives = 10;
+        ability = PowerUp.Ability.None;
     }
 
     @Override
@@ -99,12 +106,65 @@ public class Player extends GameObject
         bounds.set(x - (int)(WIDTH*.5), y - (int)(HEIGHT*.5),
                 x + (int)(WIDTH*.5), y + (int)(HEIGHT*.5));
 
+        updateAbility();
+
         if (isShooting)
             shoot();
 
         anim.update((int)(deltaTime * 1000));
 
         checkCollision();
+    }
+
+    //
+    // check if I have a powerup ability
+    public void updateAbility()
+    {
+        if (ability != PowerUp.Ability.None)
+        {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime >= abilityExpires)
+            {   // turn off ability
+                setAbility(PowerUp.Ability.None, 0);
+                return;
+            }
+
+            // apply ability
+            switch(ability)
+            {
+                case Shooting:
+                    setShooting(true);
+                    break;
+
+                case Cloak:
+                    break;
+
+                case Shield:
+                    break;
+            }
+
+        }
+    }
+
+    public void setAbility(PowerUp.Ability ab, int duration)
+    {
+        // turn off current ability
+        switch(ability)
+        {
+            case Shooting:
+                setShooting(false);
+                break;
+
+            case Cloak:
+                break;
+
+            case Shield:
+                break;
+        }
+
+        // set new ability
+        ability = ab;
+        abilityExpires = System.currentTimeMillis() + duration;
     }
 
     @Override
@@ -122,23 +182,36 @@ public class Player extends GameObject
     }
 
     //
-    // check for collisions with asteroids
+    // check for collisions with asteroids and powerups
     //
     private void checkCollision()
     {
         for (int i=0; i<gameScreen.getGameObjects().size(); i++)
         {
             GameObject gameObject = gameScreen.getGameObjects().get(i);
-            if (gameObject.getType() == Type.Asteroid)
+            if (gameObject.getType() == Type.Asteroid && ability != PowerUp.Ability.Shield)
             {
                 if (gameObject.getBounds().intersect(getBounds()))
                 {
-                    //Log.i("MOOSE", "checkCollision: HIT");
+                    //Log.i("MOOSE", "checkCollision: HIT ASTEROID");
                     gameObject.setDead(true);   // kill asteroid
                     soundList.get(SoundType.Crash.ordinal()).play(1.0f);
                     numLives = numLives - 1;
                     if (numLives == 0)
                         setDead(true);
+                }
+            }
+
+            if (gameObject.getType() == Type.PowerUp)
+            {
+                if (gameObject.getBounds().intersect(getBounds()))
+                {
+                    PowerUp powerup = (PowerUp) gameObject;
+
+                    Log.i("MOOSE", "checkCollision: HIT POWERUP: " + powerup.getName());
+                    gameObject.setDead(true);   // kill powerup
+                    // award powerup ability, start timer...
+                    setAbility(powerup.getAbility(), powerup.getAbilityDuration());
                 }
             }
         }
@@ -227,5 +300,7 @@ public class Player extends GameObject
 
     @Override
     public GameObject.Type getType() { return Type.Player; }
+
+    public PowerUp.Ability getAbility() { return ability; }
 
 }

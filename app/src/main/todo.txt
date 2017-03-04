@@ -1,13 +1,14 @@
--remove shoot control
+-allow player to move anywhere
 -fix menus
 -add splash
 -change menus
 -add aliens
 -add powerups (cannon, shield, time slow, half size, cloak)
--add overheat bar
+-add sounds for powerups
 
 ROCKS
 -add sounds to rocks
 -add explosions
 -add particle system
+
 

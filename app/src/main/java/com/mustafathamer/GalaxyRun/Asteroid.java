@@ -94,20 +94,8 @@ public class Asteroid extends GameObject
 
         updateBounds(getWidth(), getHeight());
 
-        // bounce off the walls
-        int border = 32;
-        if ( (getBounds().right >= GameScreen.gameWidth - border) || getBounds().left <= border )
-        {
-            speedX = -speedX;
-        }
-
-        // go off the bottom of the screen
-        if (y>GameScreen.gameHeight)
-        {
-            setDead(true);
-            if (gameScreen.getScore() > 0)
-                gameScreen.setScore(gameScreen.getScore()-1);
-        }
+        bounceOffWalls();
+        checkBelowScreen();
     }
 
     //
