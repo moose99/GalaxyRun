@@ -47,16 +47,12 @@ public class PowerUp extends GameObject
         setSpriteSheetRect(r);
         speedY = Background.speedY * 2;
 
-        if (name.equals("powerupBlue_shield.png"))
+        if (name.equals("powerupBlue_star.png"))
             ability = Shield;
         else
-        if (name.equals("powerupBlue_bolt.png"))
+        if (name.equals("powerupRed_star.png"))
             ability = Shooting;
-        else
-        if (name.equals("powerupBlue_star.png"))
-            ability = Cloak;
-        else
-            ability = Shooting;
+
     }
 
     public void draw(Graphics g)

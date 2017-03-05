@@ -1,9 +1,6 @@
--allow player to move anywhere
--fix menus
--add splash
--change menus
+-fix pause button
 -add aliens
--add powerups (cannon, shield, time slow, half size, cloak)
+-add powerups (time slow, half size)
 -add sounds for powerups
 
 ROCKS

@@ -3,6 +3,7 @@ package com.mustafathamer.GalaxyRun;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.text.style.AbsoluteSizeSpan;
 import android.util.Log;
 
 import com.mustafathamer.framework.Game;
@@ -42,6 +43,7 @@ public class GameScreen extends Screen
     private BackgroundMgr bgndMgr;
     private Random rand;
     private int score;
+    private Rect playerLifeRect;
 
     public GameScreen(Game game)
     {
@@ -84,6 +86,9 @@ public class GameScreen extends Screen
         paint2.setColor(Color.WHITE);
 
         score = 0;
+
+        playerLifeRect = Assets.ssReduxSprites.getRect("playerLife1_red.png");
+        assert(playerLifeRect != null);
     }
 
     @Override
@@ -117,15 +122,23 @@ public class GameScreen extends Screen
     //
     // update for ready screen
     //
-    private void updateReady(List touchEvents)
+    private void updateReady(List<TouchEvent> touchEvents)
     {
         // This example starts with a "Ready" screen.
         // When the user touches the screen, the game begins.
         // state now becomes GameState.Running.
         // Now the updateRunning() method will be called!
 
-        if (touchEvents.size() > 0)
-            state = GameState.Running;
+        int len = touchEvents.size();
+        for (int i = 0; i < len; i++)
+        {
+            TouchEvent event = touchEvents.get(i);
+            if (event.type == TouchEvent.TOUCH_UP)
+            {
+                state = GameState.Running;
+                break;
+            }
+        }
     }
 
     //
@@ -140,25 +153,26 @@ public class GameScreen extends Screen
             TouchEvent event = (TouchEvent) touchEvents.get(i);
 
             // SHOOT BUTTON
-            boolean pauseEvent = inBounds(event, 0, 0, 35, 35);
-            boolean moveShipEvent = (event.y > game.getGraphics().getHeight() * .2);    // && event.pointer == 0;
+            boolean pauseEvent = inBounds(event, 0, 0, 36, 36);
+//            boolean moveShipEvent = (event.y > game.getGraphics().getHeight() * .2);    // && event.pointer == 0;
 
 //            Log.i("MOOSE", "Event, PrevX=" + prevMoveEventX + ", X=" + event.x + ", Y=" + event.y + ", Type=" + event.type
 //            + ", Ptr=" + event.pointer);
 
 
-            if (pauseEvent && event.type == TouchEvent.TOUCH_DOWN)
+            if (pauseEvent && event.type == TouchEvent.TOUCH_UP)
             {
                 pause();
+                return;
             }
 
-            if (moveShipEvent && event.type == TouchEvent.TOUCH_UP)
+            if (event.type == TouchEvent.TOUCH_UP)
             {
                 playerObj.stop();
             }
 
             // Move ship
-            if (moveShipEvent && event.type == TouchEvent.TOUCH_DRAGGED)
+            if (event.type == TouchEvent.TOUCH_DRAGGED)
             {
                 boolean moveX = false;
                 boolean moveY = false;
@@ -248,20 +262,8 @@ public class GameScreen extends Screen
             TouchEvent event = (TouchEvent) touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_UP)
             {
-                if (inBounds(event, 0, 0, 800, 240))
-                {
-
-                    if (!inBounds(event, 0, 0, 35, 35))
-                    {
-                        resume();
-                    }
-                }
-
-                if (inBounds(event, 0, 240, 800, 240))
-                {
-                    unInit();
-                    goToMenu();
-                }
+                resume();
+                break;
             }
         }
     }
@@ -313,14 +315,13 @@ public class GameScreen extends Screen
                 gameObject = addNewRock(Asteroid.Size.Small2);
                 break;
 
-            case 7:
             case 8:
-                gameObject = addNewPowerUp("powerupBlue_bolt.png");
+                gameObject = addNewPowerUp("powerupBlue_star.png");
                 break;
             case 9:
-            case 10:
-                gameObject = addNewPowerUp("powerupBlue_shield.png");
+                gameObject = addNewPowerUp("powerupRed_star.png");
                 break;
+
 //            case 9:
 //                gameObject = addNewPowerUp("powerupBlue_star.png");
 //                break;
@@ -526,24 +527,19 @@ public class GameScreen extends Screen
         g.drawImage(Assets.button, 0, 0, buttonDim * 3, 35, 35, 35);
 
         // draw LIVES and score
-        String hud = "Lives:" + playerObj.getNumLives() + "  Score:" + getScore();
+        String hud = "Score:" + getScore();
         g.drawString(hud, g.getWidth()/2, (int)paint.getTextSize(), paint);
 
-        String abilityString="";
-        switch(playerObj.getAbility())
+        // draw remaining player lives
+        int y = (int)paint.getTextSize() + 5;
+        int x = 33;
+        for(int i=0;i<playerObj.getNumLives(); i++)
         {
-            case Cloak:
-                abilityString = "Cloak";
-                break;
-            case Shield:
-                abilityString = "Shield";
-                break;
-            case Shooting:
-                abilityString = "Fire";
-                break;
+            g.drawImage(Assets.ssReduxSprites.getImage(), x, y,
+                    playerLifeRect.left, playerLifeRect.top,
+                    playerLifeRect.width(), playerLifeRect.height());
+            x += playerLifeRect.width();
         }
-        if (abilityString.length() != 0)
-            g.drawString(abilityString, g.getWidth()/2, GameScreen.gameHeight-(int)paint.getTextSize(), paint);
     }
 
     private void drawPausedUI()

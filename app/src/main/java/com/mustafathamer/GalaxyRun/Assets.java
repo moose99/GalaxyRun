@@ -54,6 +54,8 @@ public class Assets
         ssReduxSprites.addMatchingName("meteor");
         ssReduxSprites.addMatchingName("shield");
         ssReduxSprites.addMatchingName("ufo");
+        ssReduxSprites.addMatchingName("laser");
+        ssReduxSprites.addMatchingName("playerLife1");
         return ssReduxSprites.read(g, "sheet.xml", "sheet.png");
     }
     

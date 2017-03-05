@@ -1,6 +1,7 @@
 package com.mustafathamer.GalaxyRun;
 
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.util.Log;
 
 import com.mustafathamer.framework.Graphics;
@@ -12,9 +13,8 @@ import com.mustafathamer.framework.Graphics;
 
 public class Projectile extends GameObject
 {
-    private static final int WIDTH = 4;
-    private static final int HEIGHT = 4;
     private GameScreen gameScreen;
+    private Rect laserRect;
 
     // Sounds identifiers
     public enum SoundType
@@ -36,6 +36,9 @@ public class Projectile extends GameObject
     {
         // add sounds using order of SoundType enum
         soundList.add(Assets.explosion);
+
+        laserRect = Assets.ssReduxSprites.getRect("laserRed03.png");
+        assert(laserRect != null);
     }
     //
     // Moves upwards until it goes off the screen
@@ -43,7 +46,7 @@ public class Projectile extends GameObject
     public void update(float deltaTime)
     {
         y -= speedY;
-        updateBounds(WIDTH, HEIGHT);
+        updateBounds(laserRect.width(), laserRect.height());
         if (y < 0)
         {
             setDead(true);
@@ -57,7 +60,12 @@ public class Projectile extends GameObject
     @Override
     public void draw(Graphics g)
     {
-        g.drawRect(x, y, WIDTH, HEIGHT, Color.YELLOW);
+        //g.drawRect(x, y, WIDTH, HEIGHT, Color.YELLOW);
+        g.drawImage(Assets.ssReduxSprites.getImage(),                      // image
+                x, y,
+                laserRect.left, laserRect.top,                  // srcx, srcy
+                laserRect.width(), laserRect.height());         // width, height
+
         drawBounds(g);
     }
 
@@ -84,10 +92,10 @@ public class Projectile extends GameObject
     }
 
     @Override
-    public int getWidth() { return WIDTH; }
+    public int getWidth() { return laserRect.width(); }
 
     @Override
-    public int getHeight() { return HEIGHT; }
+    public int getHeight() { return laserRect.height(); }
 
     @Override
     public GameObject.Type getType() { return Type.Projectile; }
