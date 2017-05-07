@@ -1,9 +1,9 @@
 package com.mustafathamer.GalaxyRun;
 
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.util.Log;
 
+import com.mustafathamer.util.Assert;
 import com.mustafathamer.framework.Graphics;
 
 
@@ -38,7 +38,7 @@ public class Projectile extends GameObject
         soundList.add(Assets.explosion);
 
         laserRect = Assets.ssReduxSprites.getRect("laserRed03.png");
-        assert(laserRect != null);
+        Assert.Assert(laserRect != null);
     }
     //
     // Moves upwards until it goes off the screen
@@ -77,12 +77,12 @@ public class Projectile extends GameObject
         for (int i=0; i<gameScreen.getGameObjects().size(); i++)
         {
             GameObject gameObject = gameScreen.getGameObjects().get(i);
-            if (gameObject.getType() == Type.Asteroid)
+            if (gameObject.getType() == Type.Asteroid || gameObject.getType() == Type.Alien)
             {
                 if (gameObject.getBounds().intersect(getBounds()))
                 {
                     Log.i("MOOSE", "checkCollision: HIT");
-                    gameObject.setDead(true);   // kill asteroid
+                    gameObject.setDead(true);   // kill object
                     setDead(true);              // kill me
                     soundList.get(SoundType.Explode.ordinal()).play(1.0f);
                     gameScreen.setScore(gameScreen.getScore() + 1);

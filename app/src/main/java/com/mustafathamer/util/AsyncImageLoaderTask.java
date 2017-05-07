@@ -1,4 +1,4 @@
-package com.mustafathamer.GalaxyRun;
+package com.mustafathamer.util;
 
 import android.os.AsyncTask;
 
@@ -19,12 +19,6 @@ import com.mustafathamer.framework.Image;
  );
  imgLoader.execute(fileName);
  */
-
-//define callback interface
-interface ImageLoaderCallbackInterface
-{
-    void onImageLoadFinished(Image img);
-}
 
 public class AsyncImageLoaderTask extends AsyncTask<String /*fileName*/, Void /* progress type */, Image /* result type */>
 {

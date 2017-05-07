@@ -2,15 +2,17 @@ package com.mustafathamer.GalaxyRun;
 
 import android.graphics.Rect;
 
+import com.mustafathamer.util.Assert;
 import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Image;
 
-import static com.mustafathamer.GalaxyRun.PowerUp.Ability.Cloak;
 import static com.mustafathamer.GalaxyRun.PowerUp.Ability.Shield;
 import static com.mustafathamer.GalaxyRun.PowerUp.Ability.Shooting;
 
 /**
  * Created by Mus on 3/4/2017.
+ * Handles powerup objects
+ * x,y position specifies upper left
  */
 
 public class PowerUp extends GameObject
@@ -33,17 +35,17 @@ public class PowerUp extends GameObject
     public Ability getAbility() { return ability; }
     public int getAbilityDuration() { return 5000; }    // all abilities last 5 seconds for now
 
-    public void PowerUp()
-    {
-
-    }
-
-    public void initAssets(String name)
+    public PowerUp(String name)
     {
         this.name = name;
+    }
+
+    @Override
+    public void initAssets()
+    {
         setSpriteSheetImage(Assets.ssReduxSprites.getImage());
         Rect r = Assets.ssReduxSprites.getRect(name);
-        assert(r != null);
+        Assert.Assert(r != null);
         setSpriteSheetRect(r);
         speedY = Background.speedY * 2;
 

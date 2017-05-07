@@ -3,9 +3,9 @@ package com.mustafathamer.GalaxyRun;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.text.style.AbsoluteSizeSpan;
 import android.util.Log;
 
+import com.mustafathamer.util.Assert;
 import com.mustafathamer.framework.Game;
 import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Screen;
@@ -15,8 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static android.R.attr.x;
+import static android.R.attr.y;
+
 /**
  * Created by Mus on 11/25/2016.
+ * This is the MAIN SCREEN FOR THE GAME
  * We make use of GameStates to call different sets of update/paint methods, rather than creating
  * multiple Classes for these different states of the game
  */
@@ -44,6 +48,8 @@ public class GameScreen extends Screen
     private Random rand;
     private int score;
     private Rect playerLifeRect;
+    private long lastObjectAddedTime;
+    private final long TIME_BETWEEN_NEW_OBJECTS = 500;   // millis
 
     public GameScreen(Game game)
     {
@@ -88,7 +94,9 @@ public class GameScreen extends Screen
         score = 0;
 
         playerLifeRect = Assets.ssReduxSprites.getRect("playerLife1_red.png");
-        assert(playerLifeRect != null);
+        Assert.Assert(playerLifeRect != null);
+
+        lastObjectAddedTime = 0;
     }
 
     @Override
@@ -292,89 +300,93 @@ public class GameScreen extends Screen
     //
     private void addNewGameObjects()
     {
-        int r = rand.nextInt(500);  // 800 - getScore()*20) + 1;      // from 1 to 1000, chance increases as score goes up
-        GameObject gameObject = null;
-        switch (r)
+        long curTime = System.currentTimeMillis();
+        if ( (curTime - lastObjectAddedTime) > TIME_BETWEEN_NEW_OBJECTS)
         {
-            case 1:
-                gameObject = addNewRock(Asteroid.Size.Large1);
-                break;
-            case 2:
-                gameObject = addNewRock(Asteroid.Size.Large2);
-                break;
-            case 3:
-                gameObject = addNewRock(Asteroid.Size.Medium1);
-                break;
-            case 4:
-                gameObject = addNewRock(Asteroid.Size.Medium2);
-                break;
-            case 5:
-                gameObject = addNewRock(Asteroid.Size.Small1);
-                break;
-            case 6:
-                gameObject = addNewRock(Asteroid.Size.Small2);
-                break;
+            lastObjectAddedTime = curTime;
 
-            case 8:
-                gameObject = addNewPowerUp("powerupBlue_star.png");
-                break;
-            case 9:
-                gameObject = addNewPowerUp("powerupRed_star.png");
-                break;
+            int r = rand.nextInt(30);
+            GameObject gameObject = null;
+            switch (r)
+            {
 
-//            case 9:
-//                gameObject = addNewPowerUp("powerupBlue_star.png");
-//                break;
-/*
-            case 10:
-                gameObject = addNewPowerUp("powerupGreen_bolt.png");
-                break;
-            case 11:
-                gameObject = addNewPowerUp("powerupGreen_shield.png");
-                break;
-            case 12:
-                gameObject = addNewPowerUp("powerupGreen_star.png");
-                break;
+                //
+                // ASTEROIDS
+                //
+                case 1:
+                    gameObject = addNewRock(Asteroid.Size.Large1);
+                    break;
+                case 2:
+                    gameObject = addNewRock(Asteroid.Size.Large2);
+                    break;
+                case 3:
+                    gameObject = addNewRock(Asteroid.Size.Medium1);
+                    break;
+                case 4:
+                    gameObject = addNewRock(Asteroid.Size.Medium2);
+                    break;
+                case 5:
+                    gameObject = addNewRock(Asteroid.Size.Small1);
+                    break;
+                case 6:
+                    gameObject = addNewRock(Asteroid.Size.Small2);
+                    break;
 
-            case 13:
-                gameObject = addNewPowerUp("powerupRed_bolt.png");
-                break;
-            case 14:
-                gameObject = addNewPowerUp("powerupRed_shield.png");
-                break;
-            case 15:
-                gameObject = addNewPowerUp("powerupRed_star.png");
-                break;
+                //
+                // POWERUPS
+                //
+                case 10:
+                    gameObject = addNewPowerUp("powerupBlue_star.png");
+                    break;
+                case 11:
+                    gameObject = addNewPowerUp("powerupRed_star.png");
+                    break;
 
-            case 16:
-                gameObject = addNewPowerUp("powerupYellow_bolt.png");
-                break;
-            case 17:
-                gameObject = addNewPowerUp("powerupYellow_shield.png");
-                break;
-            case 18:
-                gameObject = addNewPowerUp("powerupYellow_star.png");
-                break;
-                */
-        }
+                //
+                // ALIENS
+                //
+                case 20:
+                case 21:
+                case 22:
+                case 23:
+                case 24:
+                case 25:
+                case 26:
+                case 27:
+                case 28:
+                case 29:
+                    gameObject = addNewAlien(r % Assets.numAliens);
+                    break;
+            }
 
-        if (gameObject != null)
-        {
-            // border tile is 32 wide
-            int border = 35;
-            int x = rand.nextInt(gameWidth - border*2 - gameObject.getWidth() * 2) + border + gameObject.getWidth();
-            int y = rand.nextInt(200);
-            gameObject.setPos(x, y);
+            if (gameObject != null)
+            {
+                // border tile is 32 wide
+                int border = 35;
+                int x = rand.nextInt(gameWidth - border * 2 - gameObject.getWidth() * 2) + border + gameObject.getWidth();
+                int y = rand.nextInt(200);
+
+                gameObject.setPos(x, y);
+            }
         }
     }
 
     private GameObject addNewPowerUp(String name)
     {
-        PowerUp powerUp = new PowerUp();
-        powerUp.initAssets(name);
+        PowerUp powerUp = new PowerUp(name);
+        powerUp.initAssets();
         powerUp.setSpeedX(rand.nextInt(11) - 5);    // random horiz speed from -5 to 5
         addGameObject(powerUp);
         return powerUp;
+    }
+
+    private GameObject addNewAlien(int alienIdx)
+    {
+        Alien alien = new Alien(alienIdx);
+        alien.initAssets();
+        alien.setSpeedX(rand.nextInt(11) - 5);    // random horiz speed from -5 to 5
+        addGameObject(alien);
+        return alien;
     }
 
     private GameObject addNewRock(Asteroid.Size size)
@@ -417,7 +429,7 @@ public class GameScreen extends Screen
     //
     public void updateGameObjects(float deltaTime)
     {
-        assert(gameObjects.size() < 100);
+        Assert.Assert(gameObjects.size() < 100);
 
         // update all objects
         for (int i = 0; i < gameObjects.size(); i++)
@@ -459,7 +471,8 @@ public class GameScreen extends Screen
     {
         for (int i = 0; i < gameObjects.size(); i++)
         {
-            gameObjects.get(i).draw(g);
+            if (!gameObjects.get(i).getBounds().isEmpty())
+                gameObjects.get(i).draw(g);
         }
     }
 

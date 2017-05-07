@@ -58,7 +58,8 @@ public class Tile
 
         if (Rect.intersects(r, player.getBounds()) && type != 0)
         {
-            player.crash();
+            if (player.getAbility() != PowerUp.Ability.Shield)
+                player.crash();
         }
     }
 

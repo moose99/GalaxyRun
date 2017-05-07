@@ -47,6 +47,7 @@ public class LoadingScreen extends Screen
             Assets.loadLargeRocks(g);
             Assets.loadMediumRocks(g);
             Assets.loadSmallRocks(g);
+            Assets.loadAliens(g);
             Assets.loadProjectiles(g, game);
 
             Assets.menu = g.newImage("menu.png", ImageFormat.RGB565);

@@ -3,8 +3,10 @@ package com.mustafathamer.GalaxyRun;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.mustafathamer.util.AsyncImageLoaderTask;
 import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Image;
+import com.mustafathamer.util.ImageLoaderCallbackInterface;
 
 import static com.mustafathamer.GalaxyRun.GameScreen.gameHeight;
 

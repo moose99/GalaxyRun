@@ -1,7 +1,8 @@
 -fix pause button
--add aliens
+-add alien shooting and sounds
 -add powerups (time slow, half size)
 -add sounds for powerups
+-different explosion sounds for dieing vs killing aliens
 
 ROCKS
 -add sounds to rocks

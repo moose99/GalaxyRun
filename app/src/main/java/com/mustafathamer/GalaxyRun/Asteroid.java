@@ -20,7 +20,7 @@ public class Asteroid extends GameObject
     }
 
     private int height, width;
-    private Size size;
+    private Size size;          // rock size s/m/l
     private GameScreen gameScreen;
 
     public Asteroid(GameScreen game, Size t)

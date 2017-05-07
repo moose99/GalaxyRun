@@ -20,7 +20,8 @@ public abstract class GameObject
         Player,
         Asteroid,
         Projectile,
-        PowerUp
+        PowerUp,
+        Alien
     }
 
     protected ArrayList<Sound> soundList = new ArrayList<Sound>();
@@ -85,12 +86,10 @@ public abstract class GameObject
     {
         bounds.set(x, y, x + w, y + h);
     }
-
     public Rect getBounds()
     {
         return bounds;
     }
-
     public void setBounds(Rect bounds)
     {
         this.bounds = bounds;
@@ -100,7 +99,6 @@ public abstract class GameObject
     {
         return anim;
     }
-
     public void setAnim(Animation anim)
     {
         this.anim = anim;
@@ -110,7 +108,6 @@ public abstract class GameObject
     {
         return x;
     }
-
     public void setX(int x)
     {
         this.x = x;
@@ -120,7 +117,6 @@ public abstract class GameObject
     {
         return y;
     }
-
     public void setY(int y)
     {
         this.y = y;
@@ -136,7 +132,6 @@ public abstract class GameObject
     {
         return speedX;
     }
-
     public void setSpeedX(int speedX)
     {
         this.speedX = speedX;
@@ -146,7 +141,6 @@ public abstract class GameObject
     {
         return speedY;
     }
-
     public void setSpeedY(int speedY)
     {
         this.speedY = speedY;
@@ -156,7 +150,6 @@ public abstract class GameObject
     {
         return soundList;
     }
-
     public void setSoundList(ArrayList<Sound> soundList)
     {
         this.soundList = soundList;
@@ -166,7 +159,6 @@ public abstract class GameObject
     {
         return dead;
     }
-
     public void setDead(boolean dead)
     {
         this.dead = dead;

@@ -238,16 +238,16 @@ public class Player extends GameObject
         for (int i=0; i<gameScreen.getGameObjects().size(); i++)
         {
             GameObject gameObject = gameScreen.getGameObjects().get(i);
-            if (gameObject.getType() == Type.Asteroid)
+            if (gameObject.getType() == Type.Asteroid || gameObject.getType() == Type.Alien)
             {
                 if (gameObject.getBounds().intersect(getBounds()))
                 {
-                    //Log.i("MOOSE", "checkCollision: HIT ASTEROID");
-                    gameObject.setDead(true);   // kill asteroid
+                    //Log.i("MOOSE", "checkCollision: HIT OBJECT");
+                    gameObject.setDead(true);   // kill object
 
                     if (ability != PowerUp.Ability.Shield)
                     {
-                        // we crashed into an asteroid
+                        // we crashed into an object
                         soundList.get(SoundType.Crash.ordinal()).play(1.0f);
                         numLives = numLives - 1;
                         if (numLives == 0)
@@ -255,7 +255,7 @@ public class Player extends GameObject
                     }
                     else
                     {
-                        // our shield destroyed an asteroid
+                        // our shield destroyed an object
                         soundList.get(SoundType.Explosion.ordinal()).play(1.0f);
                         gameScreen.setScore(gameScreen.getScore() + 1);
                     }

@@ -26,6 +26,9 @@ public class Assets
     public static Image mediumRock1[], mediumRock2[];
     public static Image smallRock1[], smallRock2[];
 
+    public static int numAliens=10;
+    public static Image aliens[];
+
     public static Image menu, splash;
     public static Image tileLeft, tileRight;
     public static Image player, playerLeft, playerRight, playerDamaged;
@@ -116,6 +119,18 @@ public class Assets
             Assets.smallRock2[i] = g.newImage(fileName, Graphics.ImageFormat.RGB565);
         }
 
+        return true;
+    }
+
+    public static boolean loadAliens(Graphics g)
+    {
+        // load 18 different alien images (non-animated)
+        Assets.aliens = new Image[Assets.numAliens];
+        for (int i = 0; i < Assets.numAliens; i++)
+        {
+            String fileName = "aliens/D" + (int) (i+1) + ".png";
+            Assets.aliens[i] = g.newImage(fileName, Graphics.ImageFormat.RGB565);
+        }
         return true;
     }
 

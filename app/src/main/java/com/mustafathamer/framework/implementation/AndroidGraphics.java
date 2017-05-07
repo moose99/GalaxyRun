@@ -9,6 +9,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
@@ -18,6 +19,8 @@ import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.framework.Image;
 
 import static android.R.attr.format;
+import static android.R.attr.x;
+import static android.R.attr.y;
 
 /**
  * Created by Mus on 10/29/2016.
@@ -169,8 +172,15 @@ public class AndroidGraphics implements Graphics
     @Override
     public void drawImage(Image image, int x, int y)
     {
-        canvas.drawBitmap(((AndroidImage) image).bitmap, x, y, null);
+        canvas.drawBitmap(((AndroidImage) image).bitmap, x /*left*/, y /* top */, null);
     }
+
+    @Override
+    public void drawImage(Image image, Matrix mat)
+    {
+        canvas.drawBitmap(((AndroidImage) image).bitmap, mat, null);
+    }
+
 
     public void drawScaledImage(Image image, int x, int y, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight)
     {

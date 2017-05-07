@@ -1,5 +1,6 @@
 package com.mustafathamer.framework;
 
+import android.graphics.Matrix;
 import android.graphics.Paint;
 
 /**
@@ -27,6 +28,8 @@ public interface Graphics
                    int srcWidth, int srcHeight);
 
     void drawImage(Image Image, int x, int y);
+
+    void drawImage(Image image, Matrix mat);
 
     void drawString(String text, int x, int y, Paint paint);
 
