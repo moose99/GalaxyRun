@@ -75,10 +75,7 @@ public class AlienProjectile extends GameObject
         updateBounds();
         if (bounceOffWalls())
             rotateDeg = -rotateDeg;
-        if (!checkIfOffScreen())
-        {
-            checkCollision();
-        }
+        checkIfOffScreen();
     }
 
     @Override
@@ -92,24 +89,5 @@ public class AlienProjectile extends GameObject
                 laserRect.left, laserRect.top,                  // srcx, srcy
                 laserRect.width(), laserRect.height());         // width, height
         drawBounds(g);
-    }
-
-    //
-    // check for collisions with player
-    //
-    private void checkCollision()
-    {
-        for (int i=0; i<gameScreen.getGameObjects().size(); i++)
-        {
-            GameObject gameObject = gameScreen.getGameObjects().get(i);
-            if (gameObject.getType() == Type.Player)
-            {
-                if (gameObject.getBounds().intersect(getBounds()))
-                {
-                    setDead(true);              // kill me
-                    player.wasShot();
-                }
-            }
-        }
     }
 }

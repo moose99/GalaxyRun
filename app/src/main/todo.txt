@@ -6,8 +6,7 @@
 -smooth backgrounds
 
 ALIEN SHOOTING
--add sounds
--check for hitting the player (and player powerups)
+-add different sounds
 
 ROCKS
 -add sounds to rocks

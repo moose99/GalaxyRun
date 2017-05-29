@@ -15,6 +15,7 @@ public class PlayerProjectile extends GameObject
 {
     private GameScreen gameScreen;
     private Rect laserRect;
+    private Player player = GameScreen.getPlayer();
 
     @Override     public int getWidth() { return laserRect.width(); }
     @Override     public int getHeight() { return laserRect.height(); }
@@ -82,7 +83,7 @@ public class PlayerProjectile extends GameObject
                     gameObject.setDead(true);   // kill object
                     setDead(true);              // kill me
                     soundList.get(SoundType.Explode.ordinal()).play(1.0f);
-                    gameScreen.setScore(gameScreen.getScore() + 1);
+                    player.incrementScore(gameObject);
                 }
             }
         }

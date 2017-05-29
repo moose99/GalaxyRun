@@ -46,7 +46,7 @@ public class GameScreen extends Screen
     private int score;
     private Rect playerLifeRect;
     private long lastObjectAddedTime;
-    private final long TIME_BETWEEN_NEW_OBJECTS = 500;   // millis
+    private final long TIME_BETWEEN_NEW_OBJECTS = 1000;   // millis
 
     public static int gameHeight, gameWidth;
 
@@ -56,7 +56,7 @@ public class GameScreen extends Screen
     public boolean disablePowerUps  = false;
     public boolean disableAliens    = false;
     public boolean disableAsteroids = false;
-    public boolean unlimitedLives   = true;
+    public boolean unlimitedLives   = false;
     public boolean singleAlien      = false;     // create only one, stationary alien (if !disableAliens)
 
     public GameScreen(Game game)

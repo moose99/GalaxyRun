@@ -40,7 +40,7 @@ public class Player extends GameObject
         Explosion
     }
 
-    private final int TIME_BETWEEN_SHOTS = 150;     // in millis, 5 shots per sec
+    private final int TIME_BETWEEN_SHOTS = 250;     // in millis, 4 shots per sec
     private PowerUp.Ability ability;
     private long abilityExpires;
     private Animation shieldAnim;
@@ -240,7 +240,7 @@ public class Player extends GameObject
         for (int i=0; i<gameScreen.getGameObjects().size(); i++)
         {
             GameObject gameObject = gameScreen.getGameObjects().get(i);
-            if (gameObject.getType() == Type.Asteroid || gameObject.getType() == Type.Alien)
+            if (gameObject.getType() == Type.Asteroid || gameObject.getType() == Type.Alien || gameObject.getType() == Type.AlienProjectile)
             {
                 if (gameObject.getBounds().intersect(getBounds()))
                 {
@@ -257,7 +257,7 @@ public class Player extends GameObject
                     {
                         // our shield destroyed an object
                         soundList.get(SoundType.Explosion.ordinal()).play(1.0f);
-                        gameScreen.setScore(gameScreen.getScore() + 1);
+                        incrementScore(gameObject);
                     }
                 }
             }
@@ -273,6 +273,36 @@ public class Player extends GameObject
                     // award powerup ability, start timer...
                     setAbility(powerup.getAbility(), powerup.getAbilityDuration());
                 }
+            }
+        }
+    }
+
+    //
+    // inc score based on what object was destroyed
+    public void incrementScore(GameObject gameObj)
+    {
+        if (gameObj.getType() == Type.Alien)
+            gameScreen.setScore(gameScreen.getScore() + 1000);
+
+        if (gameObj.getType() == Type.Asteroid)
+        {
+            Asteroid rock = (Asteroid)gameObj;
+            switch (rock.getSize())
+            {
+                case Large1:
+                case Large2:
+                    gameScreen.setScore(gameScreen.getScore() + 500);
+                    break;
+
+                case Medium1:
+                case Medium2:
+                    gameScreen.setScore(gameScreen.getScore() + 250);
+                    break;
+
+                case Small1:
+                case Small2:
+                    gameScreen.setScore(gameScreen.getScore() + 100);
+                    break;
             }
         }
     }
