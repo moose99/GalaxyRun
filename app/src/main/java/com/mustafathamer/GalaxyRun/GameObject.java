@@ -10,12 +10,14 @@ import java.util.ArrayList;
 
 /**
  * Created by Mus on 1/24/2017.
- * Abstract base class for game objects, like asteroids, aliens, etc
+ * Abstract base class for game objects, like asteroids, aliens, projectiles, powerups, etc.
+ * x,y position represents the center of the object
  */
 
 public abstract class GameObject
 {
-    private boolean drawBounds = true;
+    // DEBUGGING
+    private boolean drawBounds = false;
 
     protected enum Type
     {
@@ -31,7 +33,7 @@ public abstract class GameObject
 
     protected Rect bounds = new Rect();
     protected Animation anim = new Animation();
-    protected int x = 0, y = 0;                 // center
+    protected float x = 0, y = 0;               // center
     protected int speedX = 0, speedY = 0;       // velocity
     protected boolean dead = false;             // set dead when it should be removed the game
     protected Type type;
@@ -56,23 +58,28 @@ public abstract class GameObject
 
     }
 
-    public void bounceOffWalls()
+    final public boolean bounceOffWalls()
     {
-        // bounce off the walls
+        // bounce horizontally off the walls
         int border = 32;
         if ( (getBounds().right >= GameScreen.gameWidth - border) || getBounds().left <= border )
         {
             speedX = -speedX;
+            return true;
         }
+        return false;
     }
 
-    public void checkBelowScreen()
+    final public boolean checkIfOffScreen()
     {
-        // go off the bottom of the screen
-        if (y>GameScreen.gameHeight)
+        // set to remove if we go off the bottom of the screen, return true
+        if (getBounds().top > GameScreen.gameHeight || getBounds().bottom < 0)
         {
             setDead(true);
+            return true;
         }
+
+        return false;
     }
 
     // DEBUG ONLY
@@ -84,21 +91,24 @@ public abstract class GameObject
 
     //
     // update bounds based on x,y and width, height
-    // assume x,y is upper left
+    // assume x,y is object center
     //
-    public void updateBounds(int w, int h)
+    private void updateBounds(int w, int h)
     {
-        bounds.set(x, y, x + w, y + h);
+        bounds.set(Math.round(x - w/2.f), Math.round(y - h/2.f),     // left, top
+                Math.round(x + w/2.f), Math.round(y + h/2.f));      // right, bottom
     }
-    public void updateBounds()
+
+    final public void updateBounds()
     {
         updateBounds(getWidth(), getHeight());
     }
-    public Rect getBounds()
+
+    final public Rect getBounds()
     {
         return bounds;
     }
-    public void setBounds(Rect bounds)
+    final public void setBounds(Rect bounds)
     {
         this.bounds = bounds;
     }
@@ -112,62 +122,73 @@ public abstract class GameObject
         this.anim = anim;
     }
 
-    public int getX()
+    final public float getX()
     {
         return x;
     }
-    public void setX(int x)
+    final public int getRoundX()
+    {
+        return Math.round(x);
+    }
+    final public void setX(float x)
     {
         this.x = x;
     }
 
-    public int getY()
+    final public float getY()
     {
         return y;
     }
-    public void setY(int y)
+    final public int getRoundY()
+    {
+        return Math.round(y);
+    }
+    final public void setY(float y)
     {
         this.y = y;
     }
 
-    public void setPos(int x, int y)
+    //
+    // sets the position (object center)
+    //
+    final public void setPos(float x, float y)
     {
         this.x = x;
         this.y = y;
     }
 
-    public int getSpeedX()
+    final public int getSpeedX()
     {
         return speedX;
     }
-    public void setSpeedX(int speedX)
+    final public void setSpeedX(int speedX)
     {
         this.speedX = speedX;
     }
 
-    public int getSpeedY()
+    final  public int getSpeedY()
     {
         return speedY;
     }
-    public void setSpeedY(int speedY)
+    final public void setSpeedY(int speedY)
     {
         this.speedY = speedY;
     }
 
-    public ArrayList<Sound> getSoundList()
+    final public ArrayList<Sound> getSoundList()
     {
         return soundList;
     }
-    public void setSoundList(ArrayList<Sound> soundList)
+    final public void setSoundList(ArrayList<Sound> soundList)
     {
         this.soundList = soundList;
     }
 
-    public boolean isDead()
+    final public boolean isDead()
     {
         return dead;
     }
-    public void setDead(boolean dead)
+    final public void setDead(boolean dead)
     {
         this.dead = dead;
     }

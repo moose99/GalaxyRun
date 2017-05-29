@@ -23,6 +23,19 @@ public class Asteroid extends GameObject
     private Size size;          // rock size s/m/l
     private GameScreen gameScreen;
 
+    @Override    public int getWidth()
+    {
+        return width;
+    }
+    @Override    public int getHeight()
+    {
+        return height;
+    }
+    @Override    public GameObject.Type getType() { return GameObject.Type.Asteroid; }
+
+    //
+    //
+    //
     public Asteroid(GameScreen game, Size t)
     {
         size = t;
@@ -80,7 +93,7 @@ public class Asteroid extends GameObject
     public void draw(Graphics g)
     {
         // draw image so it is centered at x, y
-        g.drawImage(anim.getImage(), x - anim.getImage().getWidth()/2, y - anim.getImage().getHeight()/2);
+        g.drawImage(anim.getImage(), Math.round(x - anim.getImage().getWidth()/2.f), Math.round(y - anim.getImage().getHeight()/2.f));
         drawBounds(g);
     }
 
@@ -92,39 +105,10 @@ public class Asteroid extends GameObject
         y += speedY;
         x += speedX;
 
-        updateBounds(getWidth(), getHeight());
-
+        updateBounds();
         bounceOffWalls();
-        checkBelowScreen();
+        checkIfOffScreen();
     }
-
-    //
-    // update bounds based on x,y and width, height
-    // assume x,y is center of the rock
-    // In this case, the asteroid images are ~twice as big as needed, with the rock in the center
-    //
-    @Override
-    public void updateBounds(int w, int h)
-    {
-        int left = x - w/2;
-        int top = y - h/2;
-        bounds.set(left, top, left + w, top + h);
-    }
-
-    @Override
-    public int getWidth()
-    {
-        return width;
-    }
-
-    @Override
-    public int getHeight()
-    {
-        return height;
-    }
-
-    @Override
-    public GameObject.Type getType() { return GameObject.Type.Asteroid; }
 
     public Size getSize()    { return size;    }
 

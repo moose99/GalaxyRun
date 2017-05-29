@@ -9,7 +9,6 @@ import com.mustafathamer.framework.Graphics;
 
 /**
  * Created by Mus on 5/7/2017.
- * x, y position specifies the upper left of the object
  */
 
 public class Alien extends GameObject
@@ -28,6 +27,10 @@ public class Alien extends GameObject
     private Matrix mat;
     private long lastShootTime;
     private GameScreen gameScreen;
+
+    @Override public  int getWidth()   {        return Assets.aliens[alienIdx].getWidth();    }
+    @Override public int getHeight()   {        return Assets.aliens[alienIdx].getHeight();    }
+    @Override public Type getType()    {        return Type.Alien;    }
 
     //
     //
@@ -76,7 +79,7 @@ public class Alien extends GameObject
         mat.postTranslate(-getWidth()/2.0f, -getHeight()/2.0f);
         mat.postRotate(deg);
         mat.postTranslate(getWidth()/2.0f, getHeight()/2.0f);
-        mat.postTranslate(x, y);
+        mat.postTranslate(getBounds().left, getBounds().top);
 
         g.drawImage(anim.getImage(), mat);
         drawBounds(g);
@@ -89,10 +92,10 @@ public class Alien extends GameObject
             y += speedY;
             x += speedX;
         }
-        updateBounds(getWidth(), getHeight());
+        updateBounds();
         bounceOffWalls();
-        checkBelowScreen();
-        shoot();
+        if (!checkIfOffScreen())
+            shoot();
     }
 
     private void shoot()
@@ -102,8 +105,8 @@ public class Alien extends GameObject
             AlienProjectile p = new AlienProjectile(gameScreen);
             p.initAssets();
             /*
-            p.setPos((int)(getBounds().centerX() - Math.round(p.getWidth()*.5)),
-                    (int)(getBounds().centerY() - Math.round(p.getHeight()*.5)) );
+            p.setPos((getBounds().centerX() - Math.round(p.getWidth()*.5f)),
+                    (getBounds().centerY() - Math.round(p.getHeight()*.5f)) );
             p.updateBounds();
             */
             p.setPos(getBounds().centerX(), getBounds().centerY());
@@ -119,10 +122,5 @@ public class Alien extends GameObject
     {
         return (System.currentTimeMillis() - lastShootTime) > TIME_BETWEEN_SHOTS;
     }
-
-    // ABSTRACT METHODS
-    public int getWidth()    {        return Assets.aliens[alienIdx].getWidth();    }
-    public int getHeight()   {        return Assets.aliens[alienIdx].getHeight();    }
-    public Type getType()    {        return Type.Alien;    }
 
 }

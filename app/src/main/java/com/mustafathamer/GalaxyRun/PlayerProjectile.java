@@ -16,18 +16,19 @@ public class PlayerProjectile extends GameObject
     private GameScreen gameScreen;
     private Rect laserRect;
 
+    @Override     public int getWidth() { return laserRect.width(); }
+    @Override     public int getHeight() { return laserRect.height(); }
+    @Override     public GameObject.Type getType() { return Type.PlayerProjectile; }
+
     // Sounds identifiers
     public enum SoundType
     {
         Explode
     }
 
-    public PlayerProjectile(GameScreen game, int startX, int startY)
+    public PlayerProjectile(GameScreen game)
     {
-        x = startX;
-        y = startY;
         speedY = 7;
-
         this.gameScreen = game;
     }
 
@@ -46,12 +47,8 @@ public class PlayerProjectile extends GameObject
     public void update(float deltaTime)
     {
         y -= speedY;
-        updateBounds(laserRect.width(), laserRect.height());
-        if (y < 0)
-        {
-            setDead(true);
-        }
-        else
+        updateBounds();
+        if (!checkIfOffScreen())
         {
             checkCollision();
         }
@@ -61,8 +58,8 @@ public class PlayerProjectile extends GameObject
     public void draw(Graphics g)
     {
         //g.drawRect(x, y, WIDTH, HEIGHT, Color.YELLOW);
-        g.drawImage(Assets.ssReduxSprites.getImage(),                      // image
-                x, y,
+        g.drawImage(Assets.ssReduxSprites.getImage(),           // image
+                getBounds().left, getBounds().top,              // x, y (upper left of sprite)
                 laserRect.left, laserRect.top,                  // srcx, srcy
                 laserRect.width(), laserRect.height());         // width, height
 
@@ -81,7 +78,7 @@ public class PlayerProjectile extends GameObject
             {
                 if (gameObject.getBounds().intersect(getBounds()))
                 {
-                    Log.i("MOOSE", "checkCollision: HIT");
+//                    Log.i("MOOSE", "checkCollision: HIT");
                     gameObject.setDead(true);   // kill object
                     setDead(true);              // kill me
                     soundList.get(SoundType.Explode.ordinal()).play(1.0f);
@@ -90,13 +87,4 @@ public class PlayerProjectile extends GameObject
             }
         }
     }
-
-    @Override
-    public int getWidth() { return laserRect.width(); }
-
-    @Override
-    public int getHeight() { return laserRect.height(); }
-
-    @Override
-    public GameObject.Type getType() { return Type.PlayerProjectile; }
 }

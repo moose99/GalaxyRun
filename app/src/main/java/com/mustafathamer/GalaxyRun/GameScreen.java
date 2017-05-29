@@ -53,11 +53,11 @@ public class GameScreen extends Screen
     //
     // DEBUG switches
     //
-    public boolean disablePowerUps  = true;
+    public boolean disablePowerUps  = false;
     public boolean disableAliens    = false;
-    public boolean disableAsteroids = true;
+    public boolean disableAsteroids = false;
     public boolean unlimitedLives   = true;
-    public boolean singleAlien  = true;     // create only one, stationary alien
+    public boolean singleAlien      = false;     // create only one, stationary alien (if !disableAliens)
 
     public GameScreen(Game game)
     {
@@ -381,7 +381,7 @@ public class GameScreen extends Screen
                 if (singleAlien && gameObject.getType() == GameObject.Type.Alien)
                 {
                     gameObject.updateBounds();
-                    gameObject.setX(playerObj.getBounds().centerX() - gameObject.getBounds().width()/2);
+                    gameObject.setX(playerObj.getX());
                 }
             }
         }

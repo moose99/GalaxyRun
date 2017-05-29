@@ -181,7 +181,7 @@ public class AndroidGraphics implements Graphics
         // rotate around the object's center
         float px = x + (srcWidth/2.f);
         float py = y + (srcHeight/2.f);
-        canvas.rotate(rotationDeg);
+        canvas.rotate(rotationDeg, px, py);
 
         srcRect.left = srcX;
         srcRect.top = srcY;

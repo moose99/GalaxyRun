@@ -12,7 +12,6 @@ import static com.mustafathamer.GalaxyRun.PowerUp.Ability.Shooting;
 /**
  * Created by Mus on 3/4/2017.
  * Handles powerup objects
- * x,y position specifies upper left
  */
 
 public class PowerUp extends GameObject
@@ -29,12 +28,19 @@ public class PowerUp extends GameObject
     private String name;
     private Ability ability;
 
-    public int getWidth()       { return spriteSheetRect.width(); }
-    public int getHeight()      { return spriteSheetRect.height(); }
-    public Type getType()       { return Type.PowerUp; }
-    public Ability getAbility() { return ability; }
-    public int getAbilityDuration() { return 5000; }    // all abilities last 5 seconds for now
+    @Override public int getWidth()           { return spriteSheetRect.width(); }
+    @Override public int getHeight()          { return spriteSheetRect.height(); }
+    @Override public Type getType()           { return Type.PowerUp; }
 
+    public Ability getAbility()     { return ability; }
+    public int getAbilityDuration() { return 5000; }    // all abilities last 5 seconds for now
+    public void setSpriteSheetRect(Rect r)      { this.spriteSheetRect = r;   }
+    public void setSpriteSheetImage(Image img)  { this.spriteSheetImage = img; }
+    public String getName() { return name; }
+
+    //
+    //
+    //
     public PowerUp(String name)
     {
         this.name = name;
@@ -59,10 +65,10 @@ public class PowerUp extends GameObject
 
     public void draw(Graphics g)
     {
-        g.drawImage(spriteSheetImage,           // image
-                x, y,                           // x, y
-                spriteSheetRect.left, spriteSheetRect.top,               // srcx, srcy
-                spriteSheetRect.width(), spriteSheetRect.height());      // width, height
+        g.drawImage(spriteSheetImage,                                       // image
+                getBounds().left, getBounds().top,                          // x, y
+                spriteSheetRect.left, spriteSheetRect.top,                  // srcx, srcy
+                spriteSheetRect.width(), spriteSheetRect.height());         // width, height
         drawBounds(g);
     }
 
@@ -71,12 +77,8 @@ public class PowerUp extends GameObject
         y += speedY;
         x += speedX;
 
-        updateBounds(getWidth(), getHeight());
+        updateBounds();
         bounceOffWalls();
-        checkBelowScreen();
+        checkIfOffScreen();
     }
-
-    public void setSpriteSheetRect(Rect r)      { this.spriteSheetRect = r;   }
-    public void setSpriteSheetImage(Image img)  { this.spriteSheetImage = img; }
-    public String getName() { return name; }
 }

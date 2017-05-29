@@ -23,11 +23,6 @@ public class Player extends GameObject
     public final int WIDTH = 99;   // from image
     public final int HEIGHT = 75;  // from image
 
-    private final int TIME_BETWEEN_SHOTS = 150;     // in millis, 5 shots per sec
-    private PowerUp.Ability ability;
-    private long abilityExpires;
-    private Animation shieldAnim;
-
     // lmage identifiers
     public enum ImageType
     {
@@ -45,12 +40,21 @@ public class Player extends GameObject
         Explosion
     }
 
+    private final int TIME_BETWEEN_SHOTS = 150;     // in millis, 5 shots per sec
+    private PowerUp.Ability ability;
+    private long abilityExpires;
+    private Animation shieldAnim;
+
     private boolean isShooting = false;
     private boolean movingLeft = false;
     private boolean movingRight = false;
     private long lastCrashTime, lastShootTime;
     private GameScreen gameScreen;
     private int numLives;
+
+    @Override   public int getWidth() { return WIDTH; }
+    @Override   public int getHeight() { return HEIGHT; }
+    @Override   public GameObject.Type getType() { return Type.Player; }
 
     //
     // position at center near the bottom
@@ -115,8 +119,7 @@ public class Player extends GameObject
 //        Log.i("MOOSE", "ctrX=" + x+ ", ctrY=" + y +
 //                ", speedX=" + speedX + ", speedY=" + speedY);
 
-        bounds.set(x - (int)(WIDTH*.5), y - (int)(HEIGHT*.5),
-                x + (int)(WIDTH*.5), y + (int)(HEIGHT*.5));
+        updateBounds();
 
         updateAbility(deltaTime);
 
@@ -190,8 +193,7 @@ public class Player extends GameObject
         else if (getMovingRight())
             playerSprite = imageList.get(Player.ImageType.Right.ordinal());
 
-        // player ship is centered at x,y
-        g.drawImage(playerSprite, x - (int) (WIDTH * .5), y - (int) (HEIGHT * .5));
+        g.drawImage(playerSprite, getBounds().left, getBounds().top);
         drawAbility(g);
         drawBounds(g);
     }
@@ -214,7 +216,7 @@ public class Player extends GameObject
                 // draw shield
                 Rect shieldRect = shieldAnim.getRect();
                 g.drawImage(shieldAnim.getImage(),                      // image
-                        x - (int) (shieldRect.width() * .5), y - (int) (shieldRect.height()* .5),                          // x, y
+                        Math.round(x - (shieldRect.width() * .5f)), Math.round(y - (shieldRect.height()* .5f)),                          // x, y
                         shieldRect.left, shieldRect.top,                  // srcx, srcy
                         shieldRect.width(), shieldRect.height());         // width, height
                 break;
@@ -285,9 +287,9 @@ public class Player extends GameObject
     {
         if (isReadyToFire())
         {
-            PlayerProjectile p = new PlayerProjectile(gameScreen, x, y);
+            PlayerProjectile p = new PlayerProjectile(gameScreen);
             p.initAssets();
-            p.setPos(x - (int)(p.getWidth()*.5), y - (int)(p.getHeight() * .5) - 30);
+            p.setPos(x, y - 30);
             gameScreen.addGameObject(p);
             soundList.get(SoundType.Laser.ordinal()).play(1.0f);
             lastShootTime = System.currentTimeMillis();
@@ -363,17 +365,9 @@ public class Player extends GameObject
             setDead(true);
     }
 
-    @Override
-    public int getWidth() { return WIDTH; }
-
-    @Override
-    public int getHeight() { return HEIGHT; }
-
     public boolean isShooting() { return isShooting;   }
     public void setShooting(boolean shooting)   {  isShooting = shooting;  }
 
-    @Override
-    public GameObject.Type getType() { return Type.Player; }
 
     public PowerUp.Ability getAbility() { return ability; }
 

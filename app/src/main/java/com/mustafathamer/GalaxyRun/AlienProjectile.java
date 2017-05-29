@@ -8,8 +8,7 @@ import com.mustafathamer.util.Assert;
 import com.mustafathamer.framework.Graphics;
 import com.mustafathamer.util.Vector2D;
 
-import java.util.Vector;
-
+import static android.R.attr.left;
 
 /**
  * Created by Mus on 11/26/2016.
@@ -22,6 +21,10 @@ public class AlienProjectile extends GameObject
     private Player player = GameScreen.getPlayer();
     private Vector2D dir;
     private float rotateDeg;
+
+    @Override    public int getWidth() { return laserRect.width(); }
+    @Override    public int getHeight() { return laserRect.height(); }
+    @Override    public GameObject.Type getType() { return Type.AlienProjectile; }
 
     // Sounds identifiers
     public enum SoundType
@@ -66,37 +69,28 @@ public class AlienProjectile extends GameObject
     @Override
     public void update(float deltaTime)
     {
-        int speed=2;
-        x += Math.round(dir.getX() * speed);
-        y += Math.round(dir.getY() * speed);
+        x += dir.getX() * speedX;
+        y += dir.getY() * speedY;
 
         updateBounds();
-        if (y < 0)
-        {
-            setDead(true);
-        }
-        else
+        if (bounceOffWalls())
+            rotateDeg = -rotateDeg;
+        if (!checkIfOffScreen())
         {
             checkCollision();
         }
-
-        bounceOffWalls();
-        checkBelowScreen();
     }
 
     @Override
     public void draw(Graphics g)
     {
-        g.drawRect(x, y, getWidth(), getHeight(), Color.BLUE);
+//        g.drawRect(getRoundX(), getRoundY(), getWidth(), getHeight(), Color.BLUE);
 
-        /*
         g.drawImage(Assets.ssReduxSprites.getImage(),           // image
-                x, y,                                           // translation
-//                rotateDeg,                                      // rotation
+                getBounds().left, getBounds().top,              // upper left position
+                rotateDeg,                                      // rotation
                 laserRect.left, laserRect.top,                  // srcx, srcy
                 laserRect.width(), laserRect.height());         // width, height
-*/
-
         drawBounds(g);
     }
 
@@ -118,13 +112,4 @@ public class AlienProjectile extends GameObject
             }
         }
     }
-
-    @Override
-    public int getWidth() { return 4; }     // laserRect.width(); }
-
-    @Override
-    public int getHeight() { return 4; }    // laserRect.height(); }
-
-    @Override
-    public GameObject.Type getType() { return Type.AlienProjectile; }
 }

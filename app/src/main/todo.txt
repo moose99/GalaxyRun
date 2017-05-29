@@ -1,10 +1,13 @@
 -fix pause button
--add alien shooting and sounds
 -add powerups (time slow, half size)
 -add sounds for powerups
 -different explosion sounds for dieing vs killing aliens
 -move assets to subfolders
 -smooth backgrounds
+
+ALIEN SHOOTING
+-add sounds
+-check for hitting the player (and player powerups)
 
 ROCKS
 -add sounds to rocks
