@@ -22,14 +22,20 @@ public interface Graphics
     void drawLine(int x, int y, int x2, int y2, int color);
 
     void drawRect(int x, int y, int width, int height, int color);
+
     void strokeRect(int x, int y, int width, int height, int color);
 
     void drawImage(Image image, int x, int y, int srcX, int srcY,
                    int srcWidth, int srcHeight);
 
+    void drawImage(Image image, int x, int y, float rotationDeg, int srcX, int srcY,
+                   int srcWidth, int srcHeight);
+
     void drawImage(Image Image, int x, int y);
 
     void drawImage(Image image, Matrix mat);
+
+    void drawScaledImage(Image image, int x, int y, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight);
 
     void drawString(String text, int x, int y, Paint paint);
 

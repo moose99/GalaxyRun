@@ -15,11 +15,14 @@ import java.util.ArrayList;
 
 public abstract class GameObject
 {
-    enum Type
+    private boolean drawBounds = true;
+
+    protected enum Type
     {
         Player,
         Asteroid,
-        Projectile,
+        PlayerProjectile,
+        AlienProjectile,
         PowerUp,
         Alien
     }
@@ -75,7 +78,8 @@ public abstract class GameObject
     // DEBUG ONLY
     public void drawBounds(Graphics g)
     {
- //      g.strokeRect(bounds.left, bounds.top, bounds.width(), bounds.height(), Color.RED);
+        if (drawBounds)
+            g.strokeRect(bounds.left, bounds.top, bounds.width(), bounds.height(), Color.RED);
     }
 
     //
@@ -85,6 +89,10 @@ public abstract class GameObject
     public void updateBounds(int w, int h)
     {
         bounds.set(x, y, x + w, y + h);
+    }
+    public void updateBounds()
+    {
+        updateBounds(getWidth(), getHeight());
     }
     public Rect getBounds()
     {

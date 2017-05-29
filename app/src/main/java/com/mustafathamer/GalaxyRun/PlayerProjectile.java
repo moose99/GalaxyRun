@@ -11,7 +11,7 @@ import com.mustafathamer.framework.Graphics;
  * Created by Mus on 11/26/2016.
  */
 
-public class Projectile extends GameObject
+public class PlayerProjectile extends GameObject
 {
     private GameScreen gameScreen;
     private Rect laserRect;
@@ -22,7 +22,7 @@ public class Projectile extends GameObject
         Explode
     }
 
-    public Projectile(GameScreen game, int startX, int startY)
+    public PlayerProjectile(GameScreen game, int startX, int startY)
     {
         x = startX;
         y = startY;
@@ -98,5 +98,5 @@ public class Projectile extends GameObject
     public int getHeight() { return laserRect.height(); }
 
     @Override
-    public GameObject.Type getType() { return Type.Projectile; }
+    public GameObject.Type getType() { return Type.PlayerProjectile; }
 }

@@ -152,7 +152,7 @@ public class AndroidGraphics implements Graphics
         canvas.drawText(text, x, y, paint);
     }
 
-
+    @Override
     public void drawImage(Image image, int x, int y, int srcX, int srcY,
                           int srcWidth, int srcHeight)
     {
@@ -167,6 +167,34 @@ public class AndroidGraphics implements Graphics
         dstRect.bottom = y + srcHeight;
 
         canvas.drawBitmap(((AndroidImage) image).bitmap, srcRect, dstRect, null);
+    }
+
+    //
+    // draws the image (specified using src rect) using the provided matrix transform
+    //
+    @Override
+    public void drawImage(Image image, int x, int y, float rotationDeg, int srcX, int srcY,
+                          int srcWidth, int srcHeight)
+    {
+        canvas.save();
+
+        // rotate around the object's center
+        float px = x + (srcWidth/2.f);
+        float py = y + (srcHeight/2.f);
+        canvas.rotate(rotationDeg);
+
+        srcRect.left = srcX;
+        srcRect.top = srcY;
+        srcRect.right = srcX + srcWidth;
+        srcRect.bottom = srcY + srcHeight;
+
+        dstRect.left = x;
+        dstRect.top = y;
+        dstRect.right = x + srcWidth;
+        dstRect.bottom = y + srcHeight;
+
+        canvas.drawBitmap(((AndroidImage) image).bitmap, srcRect, dstRect, null);
+        canvas.restore();
     }
 
     @Override

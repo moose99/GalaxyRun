@@ -8,7 +8,7 @@ import com.mustafathamer.framework.Image;
 
 import java.util.ArrayList;
 
-import static com.mustafathamer.GalaxyRun.PowerUp.Ability.Shooting;
+import static com.mustafathamer.GalaxyRun.Assets.player;
 
 /**
  * Created by Mus on 11/26/2016.
@@ -75,7 +75,7 @@ public class Player extends GameObject
         // add images using order of player.ImageType enum
         imageList.add(Assets.playerLeft);
         imageList.add(Assets.playerRight);
-        imageList.add(Assets.player);
+        imageList.add(player);
         imageList.add(Assets.playerDamaged);
 
         // add sounds using order of player.SoundType enum
@@ -84,7 +84,7 @@ public class Player extends GameObject
         soundList.add(Assets.explosion);
 
         // player ship is currently a 1 frame anim (doesn't really need to be an anim)
-        anim.addFrame(Assets.player, 1000);
+        anim.addFrame(player, 1000);
 
         // create shield animation, just 1 frame anim for now
         shieldAnim = new Animation();
@@ -249,9 +249,7 @@ public class Player extends GameObject
                     {
                         // we crashed into an object
                         soundList.get(SoundType.Crash.ordinal()).play(1.0f);
-                        numLives = numLives - 1;
-                        if (numLives == 0)
-                            setDead(true);
+                        decrementLives();
                     }
                     else
                     {
@@ -287,7 +285,7 @@ public class Player extends GameObject
     {
         if (isReadyToFire())
         {
-            Projectile p = new Projectile(gameScreen, x, y);
+            PlayerProjectile p = new PlayerProjectile(gameScreen, x, y);
             p.initAssets();
             p.setPos(x - (int)(p.getWidth()*.5), y - (int)(p.getHeight() * .5) - 30);
             gameScreen.addGameObject(p);
@@ -306,10 +304,20 @@ public class Player extends GameObject
         if (curTime - lastCrashTime > 500)
         {
             soundList.get(SoundType.Crash.ordinal()).play(1.0f);
-            numLives = numLives - 1;
-            if (numLives == 0)
-                setDead(true);
+            decrementLives();
             lastCrashTime = curTime;
+        }
+    }
+
+    //
+    // shot by an alien
+    //
+    public void wasShot()
+    {
+        if (getAbility() != PowerUp.Ability.Shield)
+        {
+            soundList.get(SoundType.Crash.ordinal()).play(1.0f);
+            decrementLives();
         }
     }
 
@@ -345,9 +353,14 @@ public class Player extends GameObject
         return numLives;
     }
 
-    public void setNumLives(int numLives)
+    public void decrementLives()
     {
-        this.numLives = numLives;
+        if (gameScreen.unlimitedLives)
+            return;
+
+        numLives = numLives - 1;
+        if (numLives == 0)
+            setDead(true);
     }
 
     @Override

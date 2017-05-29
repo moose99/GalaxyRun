@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static android.R.attr.type;
 import static android.R.attr.x;
 import static android.R.attr.y;
 
@@ -27,18 +28,14 @@ import static android.R.attr.y;
 
 public class GameScreen extends Screen
 {
-    enum GameState
+    private enum GameState
     {
         Ready, Running, Paused, GameOver
     }
 
-    GameState state = GameState.Ready;
-
-    // Variable Setup
-
     private static Player playerObj;
-    public static int gameHeight, gameWidth;
 
+    private GameState state = GameState.Ready;
     private ArrayList<GameObject> gameObjects;
     private TileMap tileMap;
     private Paint paint, paint2;
@@ -50,6 +47,17 @@ public class GameScreen extends Screen
     private Rect playerLifeRect;
     private long lastObjectAddedTime;
     private final long TIME_BETWEEN_NEW_OBJECTS = 500;   // millis
+
+    public static int gameHeight, gameWidth;
+
+    //
+    // DEBUG switches
+    //
+    public boolean disablePowerUps  = true;
+    public boolean disableAliens    = false;
+    public boolean disableAsteroids = true;
+    public boolean unlimitedLives   = true;
+    public boolean singleAlien  = true;     // create only one, stationary alien
 
     public GameScreen(Game game)
     {
@@ -367,12 +375,23 @@ public class GameScreen extends Screen
                 int y = rand.nextInt(200);
 
                 gameObject.setPos(x, y);
+
+                // line up alien directly above player
+                // TODO REMOVE
+                if (singleAlien && gameObject.getType() == GameObject.Type.Alien)
+                {
+                    gameObject.updateBounds();
+                    gameObject.setX(playerObj.getBounds().centerX() - gameObject.getBounds().width()/2);
+                }
             }
         }
     }
 
     private GameObject addNewPowerUp(String name)
     {
+        if (disablePowerUps)
+            return null;
+
         PowerUp powerUp = new PowerUp(name);
         powerUp.initAssets();
         powerUp.setSpeedX(rand.nextInt(11) - 5);    // random horiz speed from -5 to 5
@@ -382,7 +401,18 @@ public class GameScreen extends Screen
 
     private GameObject addNewAlien(int alienIdx)
     {
-        Alien alien = new Alien(alienIdx);
+        if (disableAliens)
+            return null;
+
+        if (singleAlien)
+        {
+            // check is there's already an alien in the scene
+            for (int i = 0; i < gameObjects.size(); i++)
+                if (gameObjects.get(i).getType() == GameObject.Type.Alien)
+                    return null;
+        }
+
+        Alien alien = new Alien(alienIdx, this);
         alien.initAssets();
         alien.setSpeedX(rand.nextInt(11) - 5);    // random horiz speed from -5 to 5
         addGameObject(alien);
@@ -391,7 +421,7 @@ public class GameScreen extends Screen
 
     private GameObject addNewRock(Asteroid.Size size)
     {
-        if (size == null)
+        if (size == null || disableAsteroids)
             return null;
 
         GameObject rock = null;

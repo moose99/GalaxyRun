@@ -14,18 +14,33 @@ import com.mustafathamer.framework.Graphics;
 
 public class Alien extends GameObject
 {
+    // Sounds identifiers
+    public enum SoundType
+    {
+        Laser,
+        Crash,
+        Explosion
+    }
+
+    private final int TIME_BETWEEN_SHOTS = 5000;     // in millis
     private int alienIdx;
     private Player player = GameScreen.getPlayer();
     private Matrix mat;
+    private long lastShootTime;
+    private GameScreen gameScreen;
 
     //
     //
     //
-    public Alien(int alienIdx)
+    public Alien(int alienIdx, GameScreen game)
     {
         this.alienIdx = alienIdx;
         Assert.Assert(alienIdx >= 0 && alienIdx < Assets.numAliens);
         mat = new Matrix();
+        this.gameScreen = game;
+        speedY = Background.speedY * 2;
+
+        lastShootTime = 0;
     }
 
     //
@@ -35,7 +50,12 @@ public class Alien extends GameObject
     public void initAssets()
     {
         anim.addFrame(Assets.aliens[alienIdx], 1000);   // currently just a 1 frame animation (ie. not animated)
-        speedY = Background.speedY * 2;
+
+        // add sounds using order of player.SoundType enum
+        soundList.add(Assets.playerLaser);
+        soundList.add(Assets.playerCrash);
+        soundList.add(Assets.explosion);
+
     }
 
     @Override
@@ -64,12 +84,40 @@ public class Alien extends GameObject
 
     public void update(float deltaTime)
     {
-        y += speedY;
-        x += speedX;
-
+        if (!gameScreen.singleAlien)
+        {
+            y += speedY;
+            x += speedX;
+        }
         updateBounds(getWidth(), getHeight());
         bounceOffWalls();
         checkBelowScreen();
+        shoot();
+    }
+
+    private void shoot()
+    {
+        if (isReadyToFire())
+        {
+            AlienProjectile p = new AlienProjectile(gameScreen);
+            p.initAssets();
+            /*
+            p.setPos((int)(getBounds().centerX() - Math.round(p.getWidth()*.5)),
+                    (int)(getBounds().centerY() - Math.round(p.getHeight()*.5)) );
+            p.updateBounds();
+            */
+            p.setPos(getBounds().centerX(), getBounds().centerY());
+            p.updateBounds();
+            p.calcDirection();
+            gameScreen.addGameObject(p);
+            soundList.get(SoundType.Laser.ordinal()).play(1.0f);
+            lastShootTime = System.currentTimeMillis();
+        }
+    }
+
+    public boolean isReadyToFire()
+    {
+        return (System.currentTimeMillis() - lastShootTime) > TIME_BETWEEN_SHOTS;
     }
 
     // ABSTRACT METHODS

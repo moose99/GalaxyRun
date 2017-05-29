@@ -3,6 +3,8 @@
 -add powerups (time slow, half size)
 -add sounds for powerups
 -different explosion sounds for dieing vs killing aliens
+-move assets to subfolders
+-smooth backgrounds
 
 ROCKS
 -add sounds to rocks
