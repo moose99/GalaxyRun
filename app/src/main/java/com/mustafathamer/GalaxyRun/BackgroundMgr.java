@@ -50,7 +50,7 @@ public class BackgroundMgr
             curBgIdx += 1;
             if (curBgIdx > Assets.numBackgrounds)
                 curBgIdx = 1;
-            fileName = "Background-" + curBgIdx + ".png";
+            fileName = "backgrounds/Background-" + curBgIdx + ".png";
             loadingBackground = true;
         }
         if (bg1.getBgY() >= gameHeight)

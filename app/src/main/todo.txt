@@ -1,9 +1,7 @@
--fix pause button
--add powerups (time slow, half size)
--add sounds for powerups
+-add more powerups (time slow, half size)
+-add sounds for collecting powerups
+-notification when powerup is fading
 -different explosion sounds for dieing vs killing aliens
--move assets to subfolders
--smooth backgrounds
 
 ALIEN SHOOTING
 -add different sounds

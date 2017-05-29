@@ -18,7 +18,7 @@ import com.mustafathamer.framework.Image;
 public class Assets
 {
     private static Game game;
-    public static final int numBackgrounds=7;
+    public static final int numBackgrounds=3;
     public static Image bgImg1, bgImg2;
 
     public static int numAsteroidImages=16;
@@ -130,6 +130,7 @@ public class Assets
         {
             String fileName = "aliens/D" + (int) (i+1) + ".png";
             Assets.aliens[i] = g.newImage(fileName, Graphics.ImageFormat.RGB565);
+            Assets.aliens[i].resize(Assets.aliens[i].getWidth()/2, Assets.aliens[i].getHeight()/2, false);
         }
         return true;
     }
@@ -145,8 +146,8 @@ public class Assets
     public static boolean loadBackground(Graphics g)
     {
         // load first 2 backgrounds
-        Assets.bgImg1 = g.newImage("Background-1.png", Graphics.ImageFormat.RGB565);
-        Assets.bgImg2 = g.newImage("Background-2.png", Graphics.ImageFormat.RGB565);
+        Assets.bgImg1 = g.newImage("backgrounds/Background-1.png", Graphics.ImageFormat.RGB565);
+        Assets.bgImg2 = g.newImage("backgrounds/Background-2.png", Graphics.ImageFormat.RGB565);
 
         return true;
     }
@@ -154,14 +155,14 @@ public class Assets
     public static boolean loadPlayer(Graphics g, Game game)
     {
         // use ARGB8888 for highest quality, with alpha
-        Assets.player = g.newImage("player.png", Graphics.ImageFormat.ARGB8888);
-        Assets.playerLeft = g.newImage("playerLeft.png", Graphics.ImageFormat.ARGB8888);
-        Assets.playerRight = g.newImage("playerRight.png", Graphics.ImageFormat.ARGB8888);
-        Assets.playerDamaged = g.newImage("playerDamaged.png", Graphics.ImageFormat.ARGB8888);
+        Assets.player = g.newImage("player/player.png", Graphics.ImageFormat.ARGB8888);
+        Assets.playerLeft = g.newImage("player/playerLeft.png", Graphics.ImageFormat.ARGB8888);
+        Assets.playerRight = g.newImage("player/playerRight.png", Graphics.ImageFormat.ARGB8888);
+        Assets.playerDamaged = g.newImage("player/playerDamaged.png", Graphics.ImageFormat.ARGB8888);
 
         // TODO load audio format based on hwAudioSampleRate, to allow for fast playback (avoid conversion)
-        Assets.playerLaser = game.getAudio().createSound("playerLaser_48khz.wav");
-        Assets.playerCrash = game.getAudio().createSound("playerCrash.wav");
+        Assets.playerLaser = game.getAudio().createSound("player/playerLaser_48khz.wav");
+        Assets.playerCrash = game.getAudio().createSound("player/playerCrash.wav");
 
         return true;
     }

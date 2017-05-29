@@ -12,4 +12,5 @@ public interface Image
     int getHeight();
     ImageFormat getFormat();
     void dispose();
+    void resize(int dstWidth, int dstHeight, boolean filter);
 }

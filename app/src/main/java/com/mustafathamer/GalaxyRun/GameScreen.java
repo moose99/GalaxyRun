@@ -37,7 +37,7 @@ public class GameScreen extends Screen
 
     private GameState state = GameState.Ready;
     private ArrayList<GameObject> gameObjects;
-    private TileMap tileMap;
+    private TileMap tileMap = null;
     private Paint paint, paint2;
     private int prevMoveEventX = 0;
     private int prevMoveEventY = 0;
@@ -46,7 +46,8 @@ public class GameScreen extends Screen
     private int score;
     private Rect playerLifeRect;
     private long lastObjectAddedTime;
-    private final long TIME_BETWEEN_NEW_OBJECTS = 1000;   // millis
+    private final long TIME_BETWEEN_NEW_OBJECTS = 750;   // millis
+    private int touchUpEventCount;
 
     public static int gameHeight, gameWidth;
 
@@ -83,8 +84,10 @@ public class GameScreen extends Screen
         playerObj = new Player(this);
         playerObj.initAssets();
 
-        tileMap = new TileMap();
-        tileMap.load();
+        //tileMap = new TileMap();
+
+        if (tileMap != null)
+            tileMap.load();
 
         // Defining a paint object
         paint = new Paint();
@@ -140,11 +143,11 @@ public class GameScreen extends Screen
     //
     private void updateReady(List<TouchEvent> touchEvents)
     {
-        // This example starts with a "Ready" screen.
-        // When the user touches the screen, the game begins.
-        // state now becomes GameState.Running.
-        // Now the updateRunning() method will be called!
+        // skip the ready screen and jump right into the game
+        state = GameState.Running;
+        return;
 
+        /*
         int len = touchEvents.size();
         for (int i = 0; i < len; i++)
         {
@@ -155,6 +158,7 @@ public class GameScreen extends Screen
                 break;
             }
         }
+        */
     }
 
     //
@@ -163,18 +167,15 @@ public class GameScreen extends Screen
     private void updateRunning(List touchEvents, float deltaTime)
     {
         // 1. All touch input is handled here:
+
+        int pauseButtonY = (int)paint.getTextSize() + 5;
+
         int len = touchEvents.size();
         for (int i = 0; i < len; i++)
         {
             TouchEvent event = (TouchEvent) touchEvents.get(i);
 
-            // SHOOT BUTTON
-            boolean pauseEvent = inBounds(event, 0, 0, 36, 36);
-//            boolean moveShipEvent = (event.y > game.getGraphics().getHeight() * .2);    // && event.pointer == 0;
-
-//            Log.i("MOOSE", "Event, PrevX=" + prevMoveEventX + ", X=" + event.x + ", Y=" + event.y + ", Type=" + event.type
-//            + ", Ptr=" + event.pointer);
-
+            boolean pauseEvent = inBounds(event, 0, pauseButtonY, 36, 36);
 
             if (pauseEvent && event.type == TouchEvent.TOUCH_UP)
             {
@@ -236,25 +237,17 @@ public class GameScreen extends Screen
             }
         }
 
-
         // 3. Call individual update() methods here.
         // This is where all the game updates happen.
 
         // TODO use delta time
         playerObj.update(deltaTime);
         updateGameObjects(deltaTime);
-        tileMap.update(deltaTime);
+        if (tileMap != null)
+            tileMap.update(deltaTime);
         bgndMgr.update(game.getGraphics(), deltaTime);
 
         addNewGameObjects();
-
-        // TODO - game over state
-        /*
-        if (playerObj.getY() > 500)
-        {
-            state = GameState.GameOver;
-        }
-        */
     }
 
     //
@@ -284,23 +277,25 @@ public class GameScreen extends Screen
         }
     }
 
+    //
+    // On the game over screen, we wait for 2 'up' events before exiting
+    //
     private void updateGameOver(List touchEvents)
     {
         int len = touchEvents.size();
         for (int i = 0; i < len; i++)
         {
             TouchEvent event = (TouchEvent) touchEvents.get(i);
-            if (event.type == TouchEvent.TOUCH_DOWN)
+            if (event.type == TouchEvent.TOUCH_UP)
             {
-                if (inBounds(event, 0, 0, 800, 480))
+                touchUpEventCount++;
+                if (touchUpEventCount >= 2)
                 {
                     unInit();
                     game.setScreen(new MainMenuScreen(game));
-                    return;
                 }
             }
         }
-
     }
 
     //
@@ -488,9 +483,8 @@ public class GameScreen extends Screen
 
         if (playerObj.isDead())
         {
-            //unInit();
-            goToMenu();
             state = GameState.GameOver;
+            touchUpEventCount = 0;
         }
     }
 
@@ -519,7 +513,8 @@ public class GameScreen extends Screen
 
             case Running:
                 bgndMgr.drawBackgrounds(g);
-                tileMap.draw(g);
+                if (tileMap != null)
+                    tileMap.draw(g);
                 playerObj.draw(g);
 
                 drawGameObjects(g);
@@ -566,16 +561,17 @@ public class GameScreen extends Screen
         Graphics g = game.getGraphics();
         int buttonDim = 65;
 
-        // pause button at top left
-        g.drawImage(Assets.button, 0, 0, buttonDim * 3, 35, 35, 35);
+        int y = (int)paint.getTextSize() + 5;
 
-        // draw LIVES and score
+        // show score
         String hud = "Score:" + getScore();
         g.drawString(hud, g.getWidth()/2, (int)paint.getTextSize(), paint);
 
+        // pause button at top left
+        g.drawImage(Assets.button, 0, y, buttonDim * 3, 35, 35, 35);
+
         // draw remaining player lives
-        int y = (int)paint.getTextSize() + 5;
-        int x = 33;
+        int x = 40;
         for(int i=0;i<playerObj.getNumLives(); i++)
         {
             g.drawImage(Assets.ssReduxSprites.getImage(), x, y,
@@ -590,17 +586,17 @@ public class GameScreen extends Screen
         Graphics g = game.getGraphics();
         // Darken the entire screen so you can display the Paused screen.
         g.drawARGB(155, 0, 0, 0);
-        g.drawString("Resume", g.getWidth() / 2, g.getHeight() / 2, paint2);
-        g.drawString("Menu", g.getWidth() / 2, g.getHeight() / 2 + 100, paint2);
+        g.drawString("Tap to Resume", g.getWidth() / 2, g.getHeight() / 2, paint);
     }
 
     private void drawGameOverUI()
     {
         Graphics g = game.getGraphics();
-        g.drawRect(0, 0, 1281, 801, Color.BLACK);
-        g.drawString("GAME OVER.", g.getWidth() / 2, g.getHeight() / 2, paint2);
-        g.drawString("Tap to return.", g.getWidth() / 2, g.getHeight() / 2 + 100, paint);
+        g.drawARGB(155, 0, 0, 0);
+        g.drawString("Game Over", g.getWidth() / 2, g.getHeight() / 2, paint);
 
+        String hud = "Score:" + getScore();
+        g.drawString(hud, g.getWidth()/2, (int)paint.getTextSize(), paint);
     }
 
     @Override
@@ -608,7 +604,6 @@ public class GameScreen extends Screen
     {
         if (state == GameState.Running)
             state = GameState.Paused;
-
     }
 
     @Override
@@ -628,11 +623,6 @@ public class GameScreen extends Screen
     public void backButton()
     {
         pause();
-    }
-
-    private void goToMenu()
-    {
-        game.setScreen(new MainMenuScreen(game));
     }
 
     public static Player getPlayer()

@@ -23,15 +23,15 @@ class AndroidImage implements Image
         this.format = format;
     }
 
-    @Override
-    public int getWidth()   { return bitmap.getWidth(); }
+    @Override    public int getWidth()   { return bitmap.getWidth(); }
 
-    @Override
-    public int getHeight()  { return bitmap.getHeight(); }
+    @Override    public int getHeight()  { return bitmap.getHeight(); }
 
-    @Override
-    public ImageFormat getFormat()  { return format; }
+    @Override    public ImageFormat getFormat()  { return format; }
 
-    @Override
-    public void dispose()   { bitmap.recycle(); }
+    @Override    public void dispose()   { bitmap.recycle(); }
+    @Override    public void resize(int dstWidth, int dstHeight, boolean filter)
+    {
+        this.bitmap = bitmap.createScaledBitmap(this.bitmap, dstWidth, dstHeight, filter);
+    }
 }

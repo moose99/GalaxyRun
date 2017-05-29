@@ -21,7 +21,7 @@ public class Alien extends GameObject
         Explosion
     }
 
-    private final int TIME_BETWEEN_SHOTS = 5000;     // in millis
+    private final int TIME_BETWEEN_SHOTS = 2000;     // in millis
     private int alienIdx;
     private Player player = GameScreen.getPlayer();
     private Matrix mat;
@@ -41,7 +41,7 @@ public class Alien extends GameObject
         Assert.Assert(alienIdx >= 0 && alienIdx < Assets.numAliens);
         mat = new Matrix();
         this.gameScreen = game;
-        speedY = Background.speedY * 2;
+        speedY = Background.speedY * 3;
 
         lastShootTime = 0;
     }

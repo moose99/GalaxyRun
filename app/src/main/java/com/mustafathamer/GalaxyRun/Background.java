@@ -13,7 +13,7 @@ import com.mustafathamer.framework.Image;
 
 public class Background
 {
-    public static final int speedY = 2;
+    public static final int speedY = 1;
     private int bgX, bgY, idx;
     private Image img;
 
