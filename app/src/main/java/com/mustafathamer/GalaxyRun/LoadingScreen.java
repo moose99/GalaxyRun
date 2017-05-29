@@ -50,7 +50,7 @@ public class LoadingScreen extends Screen
             Assets.loadAliens(g);
             Assets.loadProjectiles(g, game);
 
-            Assets.menu = g.newImage("menu.png", ImageFormat.RGB565);
+            Assets.menu = g.newImage("galaxy_menu.jpg", ImageFormat.RGB565);
             Assets.button = g.newImage("button.jpg", ImageFormat.RGB565);
 
             loaded = true;
