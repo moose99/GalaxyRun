@@ -2,6 +2,7 @@
 -add sounds for collecting powerups
 -notification when powerup is fading
 -different explosion sounds for dieing vs killing aliens
+-fix break in backgrounds
 
 ALIEN SHOOTING
 -add different sounds
